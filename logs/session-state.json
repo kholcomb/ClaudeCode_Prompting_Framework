@@ -1,0 +1,148 @@
+{
+  "session_info": {
+    "session_id": "session-template",
+    "created": "2024-01-01T00:00:00Z",
+    "last_updated": "2024-01-01T00:00:00Z",
+    "status": "template",
+    "project_name": "[Project Name]",
+    "current_phase": "planning"
+  },
+  "roles": {
+    "project_manager": {
+      "status": "idle",
+      "current_workflow_stage": "coordinate",
+      "active_tasks": [],
+      "completed_tasks": [],
+      "blocked_tasks": [],
+      "assumptions": [],
+      "last_activity": null,
+      "context": "Ready to coordinate project activities"
+    },
+    "architect": {
+      "status": "idle",
+      "current_workflow_stage": "explore",
+      "active_tasks": [],
+      "completed_tasks": [],
+      "blocked_tasks": [],
+      "assumptions": [],
+      "published_contracts": [],
+      "last_activity": null,
+      "context": "Ready to explore requirements and design architecture"
+    },
+    "frontend_developer": {
+      "status": "idle",
+      "current_workflow_stage": "explore",
+      "active_tasks": [],
+      "completed_tasks": [],
+      "blocked_tasks": [],
+      "assumptions": [],
+      "dependencies": [],
+      "last_activity": null,
+      "context": "Ready to explore UI/UX requirements"
+    },
+    "backend_developer": {
+      "status": "idle",
+      "current_workflow_stage": "explore",
+      "active_tasks": [],
+      "completed_tasks": [],
+      "blocked_tasks": [],
+      "assumptions": [],
+      "dependencies": [],
+      "last_activity": null,
+      "context": "Ready to explore data and API requirements"
+    },
+    "qa_engineer": {
+      "status": "idle",
+      "current_workflow_stage": "write_tests",
+      "active_tasks": [],
+      "completed_tasks": [],
+      "blocked_tasks": [],
+      "assumptions": [],
+      "quality_gates": [],
+      "last_activity": null,
+      "context": "Ready to develop testing strategy"
+    },
+    "devops_engineer": {
+      "status": "idle",
+      "current_workflow_stage": "assess",
+      "active_tasks": [],
+      "completed_tasks": [],
+      "blocked_tasks": [],
+      "assumptions": [],
+      "infrastructure_status": "not_configured",
+      "last_activity": null,
+      "context": "Ready to assess infrastructure requirements"
+    },
+    "security_engineer": {
+      "status": "idle",
+      "current_workflow_stage": "audit",
+      "active_tasks": [],
+      "completed_tasks": [],
+      "blocked_tasks": [],
+      "assumptions": [],
+      "security_findings": [],
+      "last_activity": null,
+      "context": "Ready to conduct security assessment"
+    },
+    "cloud_engineer": {
+      "status": "idle",
+      "current_workflow_stage": "analyze",
+      "active_tasks": [],
+      "completed_tasks": [],
+      "blocked_tasks": [],
+      "assumptions": [],
+      "cloud_resources": [],
+      "last_activity": null,
+      "context": "Ready to analyze scalability requirements"
+    }
+  },
+  "contracts": {
+    "active": [],
+    "deprecated": [],
+    "pending": [],
+    "consumption_tracking": {}
+  },
+  "dependencies": {
+    "blocking": [],
+    "non_blocking": [],
+    "soft": []
+  },
+  "progress": {
+    "overall_completion": 0,
+    "current_milestone": "Project Setup",
+    "milestones": [
+      {
+        "name": "Project Setup",
+        "status": "in_progress",
+        "completion": 0,
+        "target_date": null
+      }
+    ],
+    "critical_path": [],
+    "velocity": {
+      "tasks_completed_this_week": 0,
+      "average_task_completion_time": null
+    }
+  },
+  "decisions": {
+    "architectural": [],
+    "technical": [],
+    "process": []
+  },
+  "risks": {
+    "high": [],
+    "medium": [],
+    "low": []
+  },
+  "communication": {
+    "last_status_update": null,
+    "pending_stakeholder_decisions": [],
+    "team_coordination_notes": []
+  },
+  "metadata": {
+    "framework_version": "1.0.0",
+    "last_checkpoint": null,
+    "backup_count": 0,
+    "session_duration": 0
+  }
+}
