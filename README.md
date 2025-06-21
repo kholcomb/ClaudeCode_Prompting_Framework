@@ -8,6 +8,8 @@ A prompt engineering template that enables Claude Code to assist with software d
 - [Key Features](#key-features)
 - [Architecture & Design](#architecture--design)
 - [Getting Started](#getting-started)
+- [Setup Guide](#setup-guide)
+- [Customization](#customization)
 - [Team Roles & Workflows](#team-roles--workflows)
 - [Framework Components](#framework-components)
 - [Usage Examples](#usage-examples)
@@ -107,27 +109,40 @@ multi_agent_prompting_framework_template/
 
 ### Workflow Architecture
 
+```mermaid
+graph TD
+    PM[Project Manager<br/>Coordinate → Plan → Track → Communicate]
+    
+    PM --> Arch[Architect<br/>Explore → Design → Validate → Document]
+    
+    Arch --> FE[Frontend Developer<br/>Explore → Plan → Code → Commit]
+    Arch --> BE[Backend Developer<br/>Explore → Plan → Code → Commit]
+    
+    FE --> QA[QA Engineer<br/>Write Tests → Validate → Iterate → Commit]
+    BE --> QA
+    
+    FE --> DevOps[DevOps Engineer<br/>Assess → Configure → Deploy → Monitor]
+    BE --> DevOps
+    
+    DevOps --> Sec[Security Engineer<br/>Audit → Identify → Mitigate → Validate]
+    DevOps --> Cloud[Cloud Engineer<br/>Analyze → Architect → Provision → Optimize]
+    
+    QA -.->|Feedback| FE
+    QA -.->|Feedback| BE
+    Sec -.->|Security Requirements| Arch
+    Cloud -.->|Scalability Requirements| Arch
+    
+    style PM fill:#f9f,stroke:#333,stroke-width:4px
+    style Arch fill:#bbf,stroke:#333,stroke-width:2px
+    style FE fill:#bfb,stroke:#333,stroke-width:2px
+    style BE fill:#bfb,stroke:#333,stroke-width:2px
+    style QA fill:#fbf,stroke:#333,stroke-width:2px
+    style DevOps fill:#ffb,stroke:#333,stroke-width:2px
+    style Sec fill:#fbb,stroke:#333,stroke-width:2px
+    style Cloud fill:#bff,stroke:#333,stroke-width:2px
 ```
-┌─────────────────────────────────────────────────────────────┐
-│                    Project Manager                          │
-│              (Coordinate → Plan → Track)                    │
-└─────────────────┬───────────────────┬─────────────────────┘
-                  │                   │
-     ┌────────────▼────────┐ ┌───────▼────────┐
-     │     Architect       │ │   QA Engineer   │
-     │ (Explore → Design)  │ │ (Test → Validate)│
-     └────────┬────────────┘ └────────┬────────┘
-              │                       │
-    ┌─────────▼─────────┬────────────▼──────────┐
-    │ Frontend Dev     │    Backend Dev        │
-    │ (Plan → Code)    │    (Plan → Code)      │
-    └──────────────────┴───────────┬────────────┘
-                                   │
-                ┌──────────────────▼────────────────┐
-                │        DevOps/Security/Cloud      │
-                │    (Configure → Deploy → Monitor)  │
-                └───────────────────────────────────┘
-```
+
+**Note**: This diagram shows a typical workflow, not a rigid sequence. Roles work in parallel when dependencies allow, and feedback loops (shown as dotted lines) are essential for iterative development. The Project Manager coordinates all roles throughout the process.
 
 ### Contract Management System
 
@@ -143,43 +158,65 @@ The framework uses a contract-based communication system:
 ### Prerequisites
 
 - Claude Code (or Claude.ai) access
+- Git (for version control)
 - Basic understanding of software development workflows
 - A project idea or existing codebase to work with
 
-### Quick Start
+### Initial Setup
 
-1. **Set up the framework**:
+1. **Create Your Project from Template**:
    ```bash
-   # Clone or download this template
-   git clone <repository-url> my-project-name
-   cd my-project-name
+   # Option 1: Use this template on GitHub
+   # Click "Use this template" button on GitHub, then clone your new repo
    
-   # Or create the directory structure manually
+   # Option 2: Clone and reinitialize
+   git clone https://github.com/yourusername/multi_agent_prompting_framework_template.git my-project-name
+   cd my-project-name
+   rm -rf .git                    # Remove template history
+   git init                       # Initialize as your project
+   git add .
+   git commit -m "Initial commit from multi-agent framework template"
    ```
 
-2. **Customize for your project**:
-   - Update `specs/requirements.md` with your project requirements
-   - Modify `specs/project-plan.md` with your timeline and milestones
-   - Adjust `CLAUDE.md` if you need different role behaviors
-   - Place existing code in the `project/` directory
+2. **Configure Your Project**:
+   ```bash
+   # Update project specifications
+   # Edit these files to match your project:
+   - specs/requirements.md        # Your project requirements
+   - specs/project-plan.md        # Timeline and milestones
+   - specs/architecture.md        # Initial architecture ideas
+   - project/README.md            # Your project's README
+   ```
 
-3. **Start using with Claude Code**:
-   - Open the framework directory in your terminal
-   - Start Claude Code from the framework root directory
-   - The CLAUDE.md instructions will guide Claude's behavior
-   - Claude will maintain session context in `logs/session-state.json`
+3. **Start Claude Code**:
+   ```bash
+   # From the framework root directory (not project/)
+   claude                         # Or your Claude Code command
+   ```
 
-### Using the Framework
+### First Steps with Claude
 
-The framework guides Claude's responses based on the CLAUDE.md instructions. You can:
+1. **Initialize the Session**:
+   ```
+   Human: Let's start working on [your project name]. Can you review the 
+   requirements and create an initial project plan?
+   
+   Claude: [Claude will act as Project Manager and review your specs]
+   ```
 
-- **Request specific roles**: "As the architect, design the system architecture"
-- **Ask for role-specific help**: "Can the QA engineer create a test strategy?"
-- **Switch between roles**: "Now as the frontend developer, implement the UI"
-- **Get status updates**: "What's the current project status?"
-- **Hold team meetings**: "Let's have a team meeting to discuss the API design"
+2. **Work with Specific Roles**:
+   ```
+   Human: As the architect, can you design the system architecture based 
+   on our requirements?
+   
+   Human: Now as the backend developer, let's implement the user 
+   authentication system.
+   ```
 
-*Note: Specific command syntax depends on your Claude Code version and configuration.*
+3. **Check Progress**:
+   ```
+   Human: What's our current project status? What tasks are in progress?
+   ```
 
 ## Team Roles & Workflows
 
@@ -387,47 +424,237 @@ Let me assess the project structure and requirements...
 - Link code changes to documentation
 - Maintain traceability throughout development
 
+## Setup Guide
+
+### Understanding the Framework Structure
+
+#### The CLAUDE.md File
+This is the heart of the framework. It contains:
+- Role definitions and responsibilities
+- Workflow instructions for each role
+- Coordination rules between roles
+- Session management instructions
+
+**Important**: Claude reads this file to understand how to behave. Any changes directly affect Claude's responses.
+
+#### Session State Management
+The `logs/session-state.json` file tracks:
+- Active roles and their current tasks
+- Project progress and milestones
+- Decisions and assumptions made
+- Dependencies between components
+
+**Note**: This file is automatically managed by Claude during conversations.
+
+#### The .claude Directory
+Contains command templates that you can reference, though actual command implementation depends on your Claude Code version.
+
+### Configuration Best Practices
+
+1. **Project Specifications**:
+   - Be specific in requirements.md - vague requirements lead to assumptions
+   - Include technical constraints early (language, frameworks, deployment)
+   - Define clear success criteria
+
+2. **Working with Claude**:
+   - Start sessions from the framework root, not subdirectories
+   - Be explicit about role switches: "As the [role], ..."
+   - Save important decisions by asking Claude to document them
+   - Use "What's the current status?" to sync understanding
+
+3. **Session Management**:
+   - Long sessions may lose context - periodically ask for status summaries
+   - Important decisions should be saved to specs/ for persistence
+   - The session state helps, but isn't a replacement for documentation
+
+### GitHub Integration
+
+The template includes GitHub configurations:
+
+1. **Dependabot** (`.github/dependabot.yml`):
+   - Customize the `reviewers` field with your GitHub username
+   - Adjust update schedules as needed
+   - Remove package ecosystems you don't use
+
+2. **Setting Up Your Repository**:
+   ```bash
+   # After creating your GitHub repo
+   git remote add origin https://github.com/yourusername/your-project.git
+   git branch -M main
+   git push -u origin main
+   
+   # Create development branch
+   git checkout -b development
+   git push -u origin development
+   ```
+
+3. **Recommended GitHub Settings**:
+   - Enable branch protection for `main`
+   - Require PR reviews for merges
+   - Enable Dependabot security updates
+   - Set up GitHub Actions for CI/CD (add your own workflows)
+
 ## Customization
 
-### Adapting the Framework
+### Adapting Roles and Workflows
 
-1. **Custom Workflows**: Modify `CLAUDE.md` to change role behaviors and workflows
-2. **New Roles**: Add additional specialized roles as needed
-3. **Contract Types**: Create new contract templates for your domain
-4. **Project Structure**: Adjust directories to match your preferences
+#### Adding a New Role
 
-### Best Practices for Customization
+1. **Update CLAUDE.md** with the new role:
+   ```markdown
+   ### **Data Scientist**
+   **Workflow**: `analyze → model → validate → deploy`
+   **Responsibilities:**
+   - Analyze data requirements and patterns
+   - Design and implement ML models
+   - Validate model performance
+   - Deploy models to production
+   ```
 
-- Keep CLAUDE.md instructions clear and specific
-- Maintain consistency in role workflows
-- Document any custom additions
-- Test changes with sample interactions
+2. **Update session-state.json** template to include the role
+
+3. **Create relevant contract templates** if needed
+
+#### Modifying Existing Workflows
+
+To change how a role operates:
+1. Locate the role in CLAUDE.md
+2. Adjust the workflow stages
+3. Update responsibilities
+4. Test with Claude to ensure it understands
+
+### Technology-Specific Customization
+
+#### For Web Applications
+- Add `specs/frontend-framework.md` for UI guidelines
+- Create `artifacts/contracts/ui/` for component contracts
+- Include responsive design requirements
+
+#### For APIs
+- Use `specs/apis/` extensively for endpoint documentation
+- Create detailed API contracts early
+- Include authentication/authorization specs
+
+#### For Microservices
+- Add service boundaries to architecture.md
+- Create inter-service contracts
+- Document deployment strategies
+
+### Common Customizations
+
+1. **Remove Unused Roles**:
+   - Delete role sections from CLAUDE.md
+   - Remove from session-state.json template
+   - Focus on roles relevant to your project
+
+2. **Add Domain-Specific Contracts**:
+   ```bash
+   # Example for e-commerce
+   mkdir artifacts/contracts/payment
+   mkdir artifacts/contracts/inventory
+   ```
+
+3. **Integrate with Your Tools**:
+   - Add tool-specific instructions to CLAUDE.md
+   - Create templates for your stack
+   - Document integration points
+
+## Important Notes
+
+### Claude-Specific Nuances
+
+1. **Context Window Limitations**:
+   - Claude has a limited context window
+   - Long sessions may lose earlier details
+   - Periodically summarize and save important decisions
+
+2. **CLAUDE.md Interpretation**:
+   - Claude treats CLAUDE.md as authoritative instructions
+   - Changes take effect immediately in new conversations
+   - Test changes with small interactions first
+
+3. **Session Persistence**:
+   - Session state persists within a conversation
+   - New conversations require context setting
+   - Important: "Continue where we left off" requires you to provide context
+
+4. **Role Switching**:
+   - Be explicit: "As the [role]" or "Switch to [role]"
+   - Claude maintains role context during switches
+   - Avoid rapid role changes in single messages
+
+### Framework Limitations
+
+1. **Not Magic**:
+   - Requires clear communication and guidance
+   - Claude can't actually run code or access real systems
+   - You must execute suggested commands and report results
+
+2. **Manual Processes**:
+   - Git operations need your execution
+   - Testing must be run by you
+   - Deployments require your action
+
+3. **Documentation vs Reality**:
+   - Keep specs updated as project evolves
+   - Session state is not a replacement for proper documentation
+   - Contracts need manual synchronization with code
 
 ## Troubleshooting
 
-### Common Scenarios
+### Common Issues and Solutions
 
-**Starting Fresh**
-- Copy the template to a new directory
-- Clear or reset `session-state.json`
-- Update project specifications
+**"Claude doesn't seem to follow the roles"**
+- Ensure you're starting Claude from the framework root directory
+- Check that CLAUDE.md exists and is readable
+- Be more explicit with role requests
 
-**Continuing Work**
-- Claude reads session state automatically
-- Provide context about what changed
-- Ask for status updates to sync understanding
+**"Session state seems lost"**
+- Ask: "What's the current project status?"
+- Provide context: "We were working on [feature] as [role]"
+- Check logs/session-state.json is being updated
 
-**Switching Contexts**
-- Be explicit about role changes
-- Save important decisions in specs/
-- Update contracts when interfaces change
+**"Claude is making different architectural decisions"**
+- Document decisions in specs/ for persistence
+- Reference previous decisions explicitly
+- Use contracts to lock in interfaces
+
+**"The framework feels too complex for my project"**
+- Remove unused roles from CLAUDE.md
+- Simplify workflows to match your needs
+- Focus on 2-3 key roles initially
+
+### Quick Fixes
+
+```bash
+# Reset session state
+cp logs/session-state.json logs/session-state.backup.json
+# Edit session-state.json to reset specific roles
+
+# Start fresh
+rm logs/session-state.json
+git checkout logs/session-state.json
+
+# Debug role behavior
+# Ask Claude: "What is your current role and what workflow stage are you in?"
+```
 
 ### Getting Help
 
-- Review CLAUDE.md for detailed instructions
-- Check templates/ for examples
-- Examine existing contracts for patterns
-- Use /help commands for role-specific guidance
+1. **Framework Issues**:
+   - Review this README and CLAUDE.md
+   - Check templates/ for examples
+   - Examine session-state.json for state issues
+
+2. **Claude Behavior**:
+   - Be more explicit with instructions
+   - Provide context and examples
+   - Reference specific sections of CLAUDE.md
+
+3. **Project-Specific**:
+   - Ensure specs/ are clear and detailed
+   - Document decisions as you go
+   - Use contracts to clarify interfaces
 
 ---
 
