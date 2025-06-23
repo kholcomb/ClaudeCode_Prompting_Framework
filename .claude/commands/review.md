@@ -1,75 +1,117 @@
 ---
-allowed-tools: Read(*), Grep(*), Glob(*), Bash(*)
-description: Request comprehensive review of artifacts, code, or documentation
+allowed-tools: Read(project/*), Grep(project/*), Glob(project/*), Bash(cd project && *)
+description: Code review, quality assessment, and feedback for @project/ artifacts
 ---
 
-# Artifact Review Request
+# Review Command
 
 ## Context
-- Target artifact: [specified in command]
-- Current project specs: @specs/requirements.md @specs/architecture.md
-- Quality standards: @artifacts/contracts/testing/quality-standards.md
-- Security guidelines: @artifacts/contracts/security/security-standards.md
+
+- Project specifications: @specs/ directory
+- Project source code: @project/src/ directory
+- Project tests: @project/tests/ directory
+- Project documentation: @project/docs/ directory
+- Git changes: !`cd project && git diff --name-only HEAD~1`
+- Test results: !`cd project && npm test --silent 2>/dev/null || echo "No tests configured"`
 
 ## Your Task
-Conduct a thorough review of the specified artifact involving appropriate team roles:
 
-1. **Determine Review Scope**: Identify which roles should participate based on artifact type
-2. **Quality Assessment**: Evaluate against established standards and requirements
-3. **Cross-Role Validation**: Check for integration impacts and dependencies
-4. **Contract Compliance**: Verify adherence to relevant interface contracts
-5. **Security Review**: Include security implications and compliance requirements
+Conduct thorough reviews of project artifacts with multi-role perspectives:
+
+**IMPORTANT**: All reviews must validate against project requirements:
+
+1. **Requirements Compliance**: Verify @project/ code aligns with @specs/ directory
+2. **Architecture Alignment**: Ensure @project/ structure follows architectural guidelines in @specs/
+3. **Specification Gaps**: If reviewing something not covered in @specs/, ask user:
+   "This review identified functionality not specified in @specs/. Should I update the specifications to document [specific functionality found]?"
+
+### Review Types:
+
+1. **Code Review**: Analyze @project/src/ implementations
+2. **Quality Assessment**: Evaluate @project/ code against standards
+3. **Test Review**: Validate @project/tests/ coverage and quality
+4. **Documentation Review**: Check @project/docs/ accuracy and completeness
+5. **Architecture Review**: Assess @project/ structure and patterns
+
+## Usage Patterns
+
+### Code Review
+
+`/review src/components/LoginForm.js`
+`/review api/auth/`
+`/review recent-changes`
+
+### Feature Review
+
+`/review user-authentication-feature`
+`/review dashboard-implementation`
+`/review payment-integration`
+
+### Quality Assessment
+
+`/review code-quality`
+`/review test-coverage`
+`/review security-audit`
 
 ## Response Format
-```
-🔍 Review Request: [Artifact Name]
-Artifact Type: [code/documentation/design/contract]
-Review Date: [timestamp]
 
-## Review Team
-Primary Reviewer: [main responsible role]
-Secondary Reviewers: [supporting roles]
-QA Validation: [QA Engineer involvement]
+```text
+🔍 Review: [Target]
+Location: @project/[directory-path]/
+Reviewers: [Primary Role] + [Supporting Roles]
+Date: [timestamp]
 
-## Review Criteria
-✓ Functional Requirements
-✓ Technical Standards
-✓ Security Compliance
-✓ Performance Implications
-✓ Integration Compatibility
-✓ Documentation Completeness
+## Requirements Validation
+✅ Complies with specifications in @specs/
+⚠️ Partially complies, gaps identified: [details]
+❌ Does not comply with specifications: [explanation]
 
-## Findings
+## Code Analysis
+📍 **Directories Reviewed**:
+- @project/src/[directory]/ - [assessment]
+- @project/tests/[directory]/ - [assessment]
+- @project/docs/[directory]/ - [assessment]
 
-### 🟢 Strengths
-- [Positive aspects]
-- [Well-implemented areas]
+## Quality Assessment
 
-### 🟡 Recommendations
-- [Improvement suggestions]
-- [Enhancement opportunities]
+### ✅ Strengths
+- [Positive findings in @project/ code]
+- [Well-implemented patterns]
+- [Good practices observed]
 
-### 🔴 Issues
-- [Critical problems]
-- [Must-fix items]
+### ⚠️ Improvements Needed
+- @project/src/[directory]/ - [specific issue]
+- @project/tests/[directory]/ - [test improvement needed]
+- @project/docs/[directory]/ - [documentation gap]
 
-### 🔒 Security Review
-- [Security assessment]
-- [Vulnerability analysis]
-- [Compliance status]
+### 🚨 Critical Issues
+- @project/src/[directory]/ - [critical problem]
+- [Security vulnerabilities in @project/]
+- [Performance bottlenecks in @project/]
 
-## Contract Impact
-- Affects Contracts: [list of impacted contracts]
-- New Contracts Needed: [contracts to be created]
-- Deprecation Impact: [contracts that may be deprecated]
+## Multi-Role Perspectives
+
+### 🎨 Frontend Review
+[UI/UX considerations for @project/src/components/]
+
+### ⚙️ Backend Review  
+[API and logic assessment for @project/src/api/]
+
+### 🧪 QA Review
+[Test quality and coverage for @project/tests/]
+
+### 🛡️ Security Review
+[Security implications across @project/]
+
+## Recommendations
+1. **Immediate**: [Critical fixes needed in @project/]
+2. **Short-term**: [Improvements for @project/ structure]
+3. **Long-term**: [Architectural enhancements for @project/]
 
 ## Approval Status
-✅ Approved | ❌ Needs Changes | ⏸️ Conditional Approval
+[✅ Approved | ⚠️ Approved with Conditions | ❌ Needs Revision]
 
-## Next Steps
-1. [Action item 1]
-2. [Action item 2]
-3. [Follow-up requirements]
+**Next Steps**: [Specific actions for @project/ directories]
 ```
 
-Include specific line references for code reviews using file_path:line_number format.
+All review activities focus exclusively on the @project/ directory structure and validate against @specs/ requirements.

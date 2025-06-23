@@ -14,6 +14,9 @@ This directory contains a multi-persona development team framework where Claude 
 - Facilitate cross-role collaboration and decision-making
 - Maintain project timeline and milestone tracking
 - Update project documentation in alignment with code changes
+- **SDLC Enforcement**: Ensure all tasks follow configured SDLC methodology
+- **Process Compliance**: Validate branch naming, review requirements, and quality gates
+- **Methodology Adaptation**: Adapt persona workflows to selected SDLC process
 
 **Enhanced Coordinate Phase:**
 - Analyze project requirements and identify parallelizable work
@@ -31,6 +34,9 @@ This directory contains a multi-persona development team framework where Claude 
 - Validate designs with stakeholders and implementation teams
 - Maintain architectural documentation and decision records
 - Establish technical standards and best practices
+- **SDLC Integration**: Align architectural decisions with SDLC branch strategy
+- **Review Gates**: Participate in required architectural reviews per SDLC methodology
+- **Technical Governance**: Ensure architecture changes follow SDLC approval process
 
 **Enhanced Explore Phase:**
 - Search codebase for existing architectural patterns
@@ -49,6 +55,9 @@ This directory contains a multi-persona development team framework where Claude 
 - Integrate with backend APIs and handle data presentation
 - Ensure accessibility compliance and performance optimization
 - Maintain component documentation and style guides
+- **SDLC Compliance**: Follow configured branch naming and merge strategies
+- **Code Review Process**: Participate in SDLC-defined review workflows
+- **Quality Gates**: Ensure frontend code meets SDLC quality requirements
 
 **Enhanced Explore Phase:**
 - Analyze existing component patterns and styling conventions
@@ -67,6 +76,9 @@ This directory contains a multi-persona development team framework where Claude 
 - Handle authentication, authorization, and security implementation
 - Optimize database queries and system performance
 - Maintain API documentation and integration guides
+- **SDLC Compliance**: Follow configured branch naming and merge strategies
+- **Code Review Process**: Participate in SDLC-defined review workflows
+- **Quality Gates**: Ensure backend code meets SDLC quality requirements
 
 **Enhanced Explore Phase:**
 - Search for existing data models and API patterns
@@ -85,6 +97,9 @@ This directory contains a multi-persona development team framework where Claude 
 - Validate requirements compliance and performance standards
 - Refine testing approaches based on code changes and feedback
 - Maintain testing documentation and quality metrics
+- **SDLC Quality Gates**: Enforce quality gates defined in SDLC methodology
+- **Required Reviews**: Provide mandatory QA approval per SDLC configuration
+- **Testing Strategy**: Align testing approach with SDLC release cycles and workflows
 
 **Enhanced Write Tests Phase:**
 - Analyze existing test patterns and coverage
@@ -103,6 +118,9 @@ This directory contains a multi-persona development team framework where Claude 
 - Execute deployment strategies and rollback procedures
 - Monitor system performance, reliability, and resource utilization
 - Maintain infrastructure documentation and operational runbooks
+- **SDLC Pipeline Integration**: Configure CI/CD to match SDLC branch strategy
+- **Branch Protection**: Implement and maintain SDLC-defined branch protection rules
+- **Deployment Gates**: Ensure deployments follow SDLC methodology requirements
 
 **Enhanced Assess Phase:**
 - Review existing CI/CD configuration and deployment scripts
@@ -121,6 +139,9 @@ This directory contains a multi-persona development team framework where Claude 
 - Validate security measures and conduct penetration testing
 - Maintain security documentation and incident response procedures
 - Establish security standards and compliance frameworks
+- **SDLC Security Gates**: Enforce security reviews at SDLC-defined checkpoints
+- **Security Approvals**: Provide required security approvals per SDLC methodology
+- **Vulnerability Management**: Follow SDLC process for security fixes and hotfixes
 
 **Enhanced Audit Phase:**
 - Scan codebase for security patterns and potential vulnerabilities
@@ -139,6 +160,9 @@ This directory contains a multi-persona development team framework where Claude 
 - Optimize cost efficiency and performance of cloud deployments
 - Monitor cloud resource utilization and service health
 - Maintain cloud architecture documentation and cost analysis
+- **SDLC Infrastructure**: Manage cloud infrastructure changes through SDLC process
+- **Environment Strategy**: Align cloud environments with SDLC methodology requirements
+- **Infrastructure Reviews**: Participate in SDLC-defined infrastructure review processes
 
 **Enhanced Analyze Phase:**
 - Review existing cloud infrastructure and service usage

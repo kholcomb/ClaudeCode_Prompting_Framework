@@ -1,0 +1,540 @@
+# Agile/Scrum SDLC Configuration Template
+# Sprint-based development with iterative delivery
+
+metadata:
+  name: "Agile/Scrum"
+  description: "Sprint-based iterative development with regular reviews"
+  best_for: "Iterative development, frequent stakeholder feedback"
+  complexity: "medium"
+  team_size: "3-9 developers"
+  sprint_length: "2_weeks"
+
+# Branch strategy configuration
+branches:
+  main:
+    description: "Stable, potentially shippable code"
+    protection:
+      enabled: true
+      required_reviews: 2
+      dismiss_stale_reviews: true
+      require_up_to_date: true
+      required_status_checks:
+        - "ci/tests"
+        - "ci/security-scan"
+        - "ci/build"
+        - "ci/acceptance-tests"
+      restrictions:
+        users: []
+        teams: ["scrum-masters", "product-owners"]
+    merge_strategies: ["squash"]
+    auto_delete_head_branches: false
+
+  sprint:
+    pattern: "sprint/{sprint-number}-{sprint-goal}"
+    base_branch: "main"
+    merge_target: "main"
+    description: "Sprint development branch"
+    naming_rules:
+      - "Must start with 'sprint/'"
+      - "Include sprint number (e.g., sprint/23-user-authentication)"
+      - "Use kebab-case for sprint goal"
+    lifecycle:
+      - "Branch from main at sprint start"
+      - "Merge features during sprint"
+      - "Demo and review at sprint end"
+      - "Merge to main after retrospective"
+      - "Archive sprint branch"
+
+  feature:
+    pattern: "feature/{user-story-id}-{short-description}"
+    base_branch: "sprint/{current-sprint}"
+    merge_target: "sprint/{current-sprint}"
+    description: "User story implementation branches"
+    naming_rules:
+      - "Must start with 'feature/'"
+      - "Must include user story ID from backlog"
+      - "Use kebab-case for description"
+      - "Maximum 50 characters total"
+    lifecycle:
+      - "Branch from current sprint branch"
+      - "Implement user story"
+      - "Create PR to sprint branch"
+      - "Daily standup updates"
+      - "Sprint review demo"
+      - "Merge to sprint branch"
+
+  bugfix:
+    pattern: "bugfix/{bug-id}-{short-description}"
+    base_branch: "sprint/{current-sprint}"
+    merge_target: "sprint/{current-sprint}"
+    description: "Bug fix branches within sprint"
+    naming_rules:
+      - "Must start with 'bugfix/'"
+      - "Must include bug ID from tracking system"
+      - "Use kebab-case for description"
+    lifecycle:
+      - "Branch from current sprint branch"
+      - "Fix identified bug"
+      - "Create PR to sprint branch"
+      - "QA validation"
+      - "Merge to sprint branch"
+
+  hotfix:
+    pattern: "hotfix/{incident-id}-{short-description}"
+    base_branch: "main"
+    merge_targets: ["main", "sprint/{current-sprint}"]
+    description: "Emergency fixes outside sprint cycle"
+    naming_rules:
+      - "Must start with 'hotfix/'"
+      - "Must include incident ID"
+      - "Use kebab-case for description"
+    lifecycle:
+      - "Branch from main"
+      - "Implement emergency fix"
+      - "Emergency review process"
+      - "Merge to main immediately"
+      - "Merge to current sprint branch"
+
+# Scrum ceremonies and workflow
+scrum_ceremonies:
+  sprint_planning:
+    frequency: "every_2_weeks"
+    duration: "4_hours"
+    participants: ["product_owner", "scrum_master", "development_team"]
+    deliverables:
+      - "sprint_goal_defined"
+      - "user_stories_estimated"
+      - "sprint_backlog_created"
+      - "sprint_branch_created"
+    automation:
+      - "create_sprint_branch"
+      - "assign_stories_to_sprint"
+      - "create_sprint_board"
+
+  daily_standup:
+    frequency: "daily"
+    duration: "15_minutes"
+    participants: ["development_team", "scrum_master"]
+    format:
+      - "What did I accomplish yesterday?"
+      - "What will I work on today?"
+      - "What obstacles are impeding my progress?"
+    automation:
+      - "update_story_status"
+      - "track_velocity"
+      - "identify_blockers"
+
+  sprint_review:
+    frequency: "end_of_sprint"
+    duration: "2_hours"
+    participants: ["product_owner", "stakeholders", "development_team"]
+    deliverables:
+      - "working_software_demo"
+      - "stakeholder_feedback"
+      - "product_backlog_updates"
+    automation:
+      - "generate_demo_environment"
+      - "collect_feedback"
+      - "update_product_backlog"
+
+  sprint_retrospective:
+    frequency: "end_of_sprint"
+    duration: "1.5_hours"
+    participants: ["development_team", "scrum_master"]
+    deliverables:
+      - "process_improvements"
+      - "action_items"
+      - "velocity_analysis"
+    automation:
+      - "generate_velocity_report"
+      - "track_improvement_actions"
+      - "merge_sprint_to_main"
+
+# Workflow stages and requirements
+workflow:
+  sprint_initialization:
+    steps:
+      - name: "Sprint Planning"
+        description: "Plan sprint goals and select user stories"
+        required: true
+        participants: ["product_owner", "scrum_master", "development_team"]
+        
+      - name: "Create Sprint Branch"
+        description: "Create sprint branch from main"
+        required: true
+        automation: "branch_creation_with_protection"
+        
+      - name: "Setup Sprint Board"
+        description: "Configure Kanban board for sprint tracking"
+        required: true
+        automation: "create_sprint_board"
+
+  story_development:
+    steps:
+      - name: "Story Assignment"
+        description: "Assign user story to developer"
+        required: true
+        trigger: "sprint_planning"
+        
+      - name: "Create Feature Branch"
+        description: "Branch from sprint branch for story implementation"
+        required: true
+        automation: "branch_creation_validation"
+        
+      - name: "Implement Story"
+        description: "Develop user story with acceptance criteria"
+        required: true
+        quality_gates:
+          - "acceptance_criteria_met"
+          - "unit_tests_pass"
+          - "code_coverage_80_percent"
+          - "definition_of_done_complete"
+        
+      - name: "Daily Updates"
+        description: "Update story status in daily standup"
+        required: true
+        automation: "status_tracking"
+        
+      - name: "Create Pull Request"
+        description: "Create PR from feature to sprint branch"
+        required: true
+        reviewers:
+          required_count: 1
+          required_personas: ["qa_engineer"]
+          auto_assign: true
+        
+      - name: "Story Review"
+        description: "Code review and QA validation"
+        required: true
+        approval_criteria:
+          - "Acceptance criteria validated"
+          - "Code quality standards met"
+          - "No blocking issues"
+        
+      - name: "Merge to Sprint"
+        description: "Merge completed story to sprint branch"
+        required: true
+        automation: "auto_merge_on_approval"
+
+  sprint_completion:
+    steps:
+      - name: "Sprint Review Demo"
+        description: "Demo completed features to stakeholders"
+        required: true
+        participants: ["product_owner", "stakeholders"]
+        
+      - name: "Collect Feedback"
+        description: "Gather stakeholder feedback on features"
+        required: true
+        automation: "feedback_collection"
+        
+      - name: "Sprint Retrospective"
+        description: "Team retrospective on sprint process"
+        required: true
+        participants: ["development_team", "scrum_master"]
+        
+      - name: "Merge Sprint to Main"
+        description: "Merge completed sprint to main branch"
+        required: true
+        reviewers:
+          required_count: 2
+          required_personas: ["product_owner", "scrum_master"]
+        post_merge:
+          - "deploy_to_staging"
+          - "run_regression_tests"
+          - "update_product_backlog"
+
+# Persona-specific responsibilities in Scrum
+personas:
+  product_owner:
+    scrum_role: "Product Owner"
+    responsibilities:
+      - "Maintain and prioritize product backlog"
+      - "Define user stories and acceptance criteria"
+      - "Participate in sprint planning and review"
+      - "Approve sprint completion"
+    required_approvals:
+      - "Sprint goal definition"
+      - "User story acceptance"
+      - "Sprint to main merges"
+    artifacts_owned:
+      - "product_backlog"
+      - "user_stories"
+      - "acceptance_criteria"
+
+  scrum_master:
+    scrum_role: "Scrum Master"
+    responsibilities:
+      - "Facilitate scrum ceremonies"
+      - "Remove impediments for development team"
+      - "Coach team on scrum practices"
+      - "Monitor team velocity and health"
+    required_approvals:
+      - "Sprint retrospective actions"
+      - "Process change implementations"
+    artifacts_owned:
+      - "sprint_board"
+      - "velocity_charts"
+      - "impediment_log"
+
+  project_manager:
+    scrum_role: "Development Team"
+    responsibilities:
+      - "Coordinate with stakeholders"
+      - "Track project progress across sprints"
+      - "Manage dependencies between teams"
+    mapping: "Often fulfills Scrum Master role"
+
+  architect:
+    scrum_role: "Development Team"
+    responsibilities:
+      - "Provide technical guidance during sprint planning"
+      - "Review architectural decisions in stories"
+      - "Ensure technical debt management"
+    required_approvals:
+      - "Architectural changes"
+      - "Technical debt stories"
+
+  frontend_developer:
+    scrum_role: "Development Team"
+    responsibilities:
+      - "Estimate and implement UI user stories"
+      - "Participate in all scrum ceremonies"
+      - "Collaborate on story definition"
+    story_types:
+      - "UI/UX improvements"
+      - "Frontend features"
+      - "User experience stories"
+
+  backend_developer:
+    scrum_role: "Development Team"
+    responsibilities:
+      - "Estimate and implement backend user stories"
+      - "Participate in all scrum ceremonies"
+      - "Support frontend integration"
+    story_types:
+      - "API development"
+      - "Data processing"
+      - "Integration stories"
+
+  qa_engineer:
+    scrum_role: "Development Team"
+    responsibilities:
+      - "Define acceptance criteria with Product Owner"
+      - "Validate story completion"
+      - "Ensure definition of done is met"
+    required_approvals:
+      - "All story completions"
+      - "Sprint readiness for demo"
+    artifacts_owned:
+      - "test_plans"
+      - "acceptance_test_results"
+
+  devops_engineer:
+    scrum_role: "Development Team"
+    responsibilities:
+      - "Ensure CI/CD supports sprint workflow"
+      - "Maintain demo and staging environments"
+      - "Support sprint deployments"
+    story_types:
+      - "Infrastructure improvements"
+      - "Deployment automation"
+      - "Monitoring enhancements"
+
+  security_engineer:
+    scrum_role: "Development Team"
+    responsibilities:
+      - "Review security-related stories"
+      - "Ensure security acceptance criteria"
+      - "Validate security implementations"
+    story_types:
+      - "Security features"
+      - "Compliance stories"
+      - "Security fixes"
+
+  cloud_engineer:
+    scrum_role: "Development Team"
+    responsibilities:
+      - "Support cloud infrastructure stories"
+      - "Ensure scalability of implementations"
+      - "Manage cloud resource changes"
+    story_types:
+      - "Cloud migrations"
+      - "Scalability improvements"
+      - "Cost optimization"
+
+# User story templates
+story_templates:
+  user_story:
+    format: "As a [user type], I want [functionality] so that [benefit]"
+    required_fields:
+      - "user_type"
+      - "functionality"
+      - "benefit"
+      - "acceptance_criteria"
+      - "story_points"
+      - "priority"
+    acceptance_criteria_format:
+      - "Given [context]"
+      - "When [action]"
+      - "Then [outcome]"
+
+  technical_story:
+    format: "As a [system/component], I need [technical requirement] so that [system benefit]"
+    required_fields:
+      - "component"
+      - "technical_requirement"
+      - "system_benefit"
+      - "acceptance_criteria"
+      - "story_points"
+    use_cases:
+      - "Infrastructure improvements"
+      - "Technical debt reduction"
+      - "Performance optimizations"
+
+  bug_story:
+    format: "As a [affected user], I cannot [expected behavior] because [bug description]"
+    required_fields:
+      - "affected_user"
+      - "expected_behavior"
+      - "bug_description"
+      - "steps_to_reproduce"
+      - "acceptance_criteria"
+      - "severity"
+
+# Definition of Done
+definition_of_done:
+  code_complete:
+    - "Code written and reviewed"
+    - "Unit tests written and passing"
+    - "Code coverage meets threshold (80%)"
+    - "Code follows team standards"
+    
+  testing_complete:
+    - "Acceptance criteria validated"
+    - "Integration tests passing"
+    - "Manual testing completed"
+    - "No critical or high severity bugs"
+    
+  documentation_complete:
+    - "Code documented"
+    - "User documentation updated"
+    - "API documentation updated"
+    - "Deployment notes created"
+    
+  deployment_ready:
+    - "Code merged to sprint branch"
+    - "Demo environment updated"
+    - "Stakeholder demo completed"
+    - "Product Owner acceptance"
+
+# Estimation and velocity
+estimation:
+  method: "story_points"
+  scale: "fibonacci"  # 1, 2, 3, 5, 8, 13, 21
+  reference_stories:
+    1: "Simple configuration change"
+    2: "Minor UI update"
+    3: "New API endpoint"
+    5: "Complete user story with UI and backend"
+    8: "Complex feature requiring multiple components"
+    13: "Large feature requiring research and design"
+    21: "Epic-level work (should be broken down)"
+
+velocity_tracking:
+  sprint_capacity: "team_velocity_average"
+  velocity_calculation: "completed_story_points / sprint_length"
+  metrics:
+    - "planned_vs_completed_points"
+    - "velocity_trend"
+    - "cycle_time_per_story"
+    - "defect_rate"
+
+# Quality gates specific to Scrum
+quality_gates:
+  story_acceptance:
+    required_checks:
+      - "acceptance_criteria_met"
+      - "definition_of_done_complete"
+      - "unit_tests_pass"
+      - "code_review_approved"
+    approvers: ["qa_engineer", "product_owner"]
+
+  sprint_completion:
+    required_checks:
+      - "all_stories_accepted"
+      - "sprint_goal_achieved"
+      - "integration_tests_pass"
+      - "demo_successful"
+    approvers: ["product_owner", "scrum_master"]
+
+  release_readiness:
+    required_checks:
+      - "sprint_merged_to_main"
+      - "regression_tests_pass"
+      - "performance_benchmarks_met"
+      - "security_scan_pass"
+    approvers: ["product_owner", "development_team"]
+
+# Automation for Scrum workflow
+automation:
+  sprint_management:
+    auto_create_sprint_branches: true
+    auto_assign_reviewers: true
+    auto_update_story_status: true
+    auto_generate_burndown_charts: true
+    
+  ceremony_automation:
+    daily_standup_reminders: true
+    sprint_planning_board_setup: true
+    retrospective_data_collection: true
+    demo_environment_preparation: true
+    
+  metrics_collection:
+    velocity_tracking: true
+    cycle_time_measurement: true
+    defect_rate_monitoring: true
+    team_satisfaction_surveys: true
+
+# Integration with project management tools
+integrations:
+  jira:
+    sync_user_stories: true
+    update_story_status: true
+    track_velocity: true
+    
+  azure_devops:
+    sync_work_items: true
+    update_board_status: true
+    track_sprint_progress: true
+    
+  github_projects:
+    sync_issues: true
+    update_project_board: true
+    track_milestones: true
+
+# Metrics and reporting for Scrum
+metrics:
+  sprint_metrics:
+    - "sprint_burndown"
+    - "velocity_trend"
+    - "scope_creep"
+    - "story_completion_rate"
+    
+  quality_metrics:
+    - "defect_rate_per_sprint"
+    - "escaped_defects"
+    - "technical_debt_trend"
+    - "code_coverage_trend"
+    
+  team_metrics:
+    - "team_satisfaction"
+    - "retrospective_actions_completed"
+    - "impediment_resolution_time"
+    - "knowledge_sharing_frequency"
+
+  product_metrics:
+    - "feature_adoption_rate"
+    - "user_satisfaction"
+    - "time_to_market"
+    - "roi_per_feature"

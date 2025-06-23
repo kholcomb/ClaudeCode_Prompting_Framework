@@ -1,24 +1,30 @@
 ---
-allowed-tools: Read(*), Write(*)
-description: Provide session summary with continuation prompts for each role
+allowed-tools: Read(*), Write(*), Bash(cd project && *)
+description: Provide session summary with continuation prompts focused on @project/
 ---
 
 # End Session Summary
 
 ## Context
-- Current session state: @logs/session-state.json
-- Project progress: @specs/project-plan.md
-- Active contracts: @artifacts/contracts/
-- Role assignments and progress across all team members
+
+- Project specifications: @specs/ directory
+- Project source code: @project/src/ directory
+- Project tests: @project/tests/ directory
+- Project documentation: @project/docs/ directory
+- Project configuration: @project/config/ directory
+- Session work completed on @project/
 
 ## Your Task
+
 Provide comprehensive session closure with continuation guidance:
 
-1. **Session Summary**: Overview of work completed during this session
-2. **Role-Specific Status**: Current state and context for each active role
-3. **Continuation Prompts**: Specific prompts to resume work effectively
-4. **Handoff Information**: Critical context for session continuity
-5. **Priority Actions**: Next most important actions to take
+**IMPORTANT**: Session summary must focus on @project/ work and validate against requirements:
+
+1. **Project Work Summary**: Overview of @project/ changes completed during this session
+2. **Requirements Compliance**: How session work aligns with @specs/ directory
+3. **Role-Specific Status**: Current state and context for work on @project/
+4. **Continuation Prompts**: Specific prompts to resume @project/ work effectively
+5. **Priority Actions**: Next most important actions for @project/ development
 
 ## Session Closure Process
 
@@ -41,24 +47,30 @@ Provide comprehensive session closure with continuation guidance:
 - Critical timelines or deadlines
 
 ## Response Format
-```
+
+```text
 🏁 Session End Summary
 Session Duration: [start time] - [end time]
-Session ID: [session identifier]
+Project Location: @project/
 Generated: [timestamp]
+
+## Requirements Validation
+✅ Session work aligns with @specs/ requirements
+⚠️ Some work may need specification updates: [details]
+❌ Session work conflicts with current @specs/: [explanation]
 
 ## Session Overview
 
-### 🏆 Accomplishments
-- [Major accomplishment 1]
-- [Major accomplishment 2]
-- [Major accomplishment 3]
+### 🏆 Accomplishments in @project/
+- [Major accomplishment 1 in @project/]
+- [Major accomplishment 2 in @project/]
+- [Major accomplishment 3 in @project/]
 
-### 📈 Progress Made
-- **Tasks Completed**: [count] tasks finished
-- **Contracts Updated**: [count] contracts modified
-- **Code Changes**: [summary of code work]
-- **Documentation**: [documentation updates]
+### 📈 Progress Made on @project/
+- **Code Changes**: [summary of @project/src/ work]
+- **Tests Added**: [summary of @project/tests/ work]
+- **Documentation**: [updates to @project/docs/]
+- **Configuration**: [changes to @project/config/]
 
 ### 🔄 Work in Progress
 - [In-progress item 1] - [percentage complete]
@@ -95,45 +107,45 @@ Next I need to [specific technical action] and validate [specific aspect]."
 **Estimated Time to Resume**: [time needed to get back up to speed]
 
 ### 🎨 Frontend Developer
-**Current Status**: [workflow stage and current focus]
-**Active Tasks**: [list of active frontend tasks]
-**Code Progress**: [summary of frontend code work]
+**Current Status**: [workflow stage and current focus on @project/]
+**Active Tasks**: [list of active frontend tasks in @project/src/]
+**Code Progress**: [summary of frontend work in @project/]
 **Context for Continuation**:
 ```
 To continue as Frontend Developer:
-"I was implementing [specific feature/component]. 
+"I was implementing [specific feature/component] in @project/src/[directory]/. 
 The current approach uses [technology/pattern] and integrates with [API/service]. 
 Next I need to [specific development task] and test [specific functionality]."
 ```
-**Dependencies**: [waiting on contracts/APIs/designs]
+**Dependencies**: [waiting on @specs/ updates or other @project/ components]
 **Estimated Time to Resume**: [time needed to get back up to speed]
 
 ### ⚙️ Backend Developer
-**Current Status**: [workflow stage and current focus]
-**Active Tasks**: [list of active backend tasks]
-**API Progress**: [summary of API development]
+**Current Status**: [workflow stage and current focus on @project/]
+**Active Tasks**: [list of active backend tasks in @project/src/]
+**API Progress**: [summary of API development in @project/]
 **Context for Continuation**:
 ```
 To continue as Backend Developer:
-"I was developing [specific API/service/feature]. 
+"I was developing [specific API/service/feature] in @project/src/[directory]/. 
 The implementation uses [technology/framework] and handles [specific functionality]. 
 Next I need to [specific development task] and integrate with [system/service]."
 ```
-**Database Changes**: [any schema or data changes]
+**Database Changes**: [any schema or data changes in @project/]
 **Estimated Time to Resume**: [time needed to get back up to speed]
 
 ### 🧪 QA Engineer
-**Current Status**: [workflow stage and current focus]
-**Active Tasks**: [list of active QA tasks]
-**Testing Progress**: [summary of testing work]
+**Current Status**: [workflow stage and current focus on @project/tests/]
+**Active Tasks**: [list of active QA tasks for @project/]
+**Testing Progress**: [summary of testing work in @project/tests/]
 **Context for Continuation**:
 ```
 To continue as QA Engineer:
-"I was testing [specific feature/component] using [testing approach]. 
+"I was testing [specific feature/component] in @project/tests/[directory]/ using [testing approach]. 
 Current test coverage is [status] and I identified [findings]. 
 Next I need to [specific testing task] and validate [specific requirements]."
 ```
-**Quality Issues**: [any quality concerns identified]
+**Quality Issues**: [any quality concerns identified in @project/]
 **Estimated Time to Resume**: [time needed to get back up to speed]
 
 ### 🚀 DevOps Engineer

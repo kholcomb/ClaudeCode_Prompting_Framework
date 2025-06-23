@@ -1,25 +1,31 @@
 ---
-allowed-tools: Read(*), Write(*), Bash(*)
-description: Create a progress checkpoint snapshot with rollback capability
+allowed-tools: Read(*), Write(*), Bash(cd project && *)
+description: Create a progress checkpoint snapshot with rollback capability for @project/
 ---
 
 # Progress Checkpoint
 
 ## Context
-- Current session state: @logs/session-state.json
-- Project progress: @specs/project-plan.md
-- Code state: !`cd project && git rev-parse --short HEAD`
-- Active contracts: @artifacts/contracts/
-- Recent activity: !`find logs -name "*.log" -mtime -1 | wc -l` log entries
+
+- Project specifications: @specs/ directory
+- Project source code: @project/src/ directory
+- Project tests: @project/tests/ directory
+- Project documentation: @project/docs/ directory
+- Project configuration: @project/config/ directory
+- Code state: !`cd project && git rev-parse --short HEAD 2>/dev/null || echo "No git repository"`
+- Working directory: !`cd project && git status --porcelain 2>/dev/null || echo "No git repository"`
 
 ## Your Task
+
 Create a comprehensive checkpoint snapshot that captures:
 
-1. **Progress State**: All completed work and current status
-2. **Code Snapshot**: Current code state and recent changes
-3. **Contract Status**: All active contracts and their versions
-4. **Role Context**: Each role's current workflow stage and assignments
-5. **Rollback Information**: Data needed to revert to this checkpoint
+**IMPORTANT**: Checkpoint must validate against project requirements:
+
+1. **Project State**: Current @project/ implementation status vs @specs/ requirements
+2. **Code Snapshot**: Current @project/ code state and recent changes
+3. **Requirements Compliance**: How well @project/ aligns with @specs/ directory
+4. **Implementation Progress**: Feature completion status in @project/
+5. **Rollback Information**: Data needed to revert @project/ to this checkpoint
 
 ## Checkpoint Creation Process
 
@@ -42,16 +48,24 @@ Create a comprehensive checkpoint snapshot that captures:
 - Note potential rollback risks and mitigations
 
 ## Response Format
-```
+
+```text
 📅 Checkpoint Created
 Checkpoint ID: checkpoint-[timestamp]
 Created: [full timestamp]
+Project Location: @project/
 Code State: [git hash or code snapshot reference]
 
-## Progress Snapshot
-🏆 **Overall Progress**: [X]% complete
+## Requirements Compliance Snapshot
+✅ [X]% of @specs/ requirements implemented in @project/
+⚠️ [X] requirements partially implemented  
+❌ [X] requirements not started
+📋 [X] implemented features not documented in @specs/
+
+## Project Progress Snapshot
+🏆 **Overall Progress**: [X]% complete against @specs/
 🏁 **Current Milestone**: [milestone name and status]
-📈 **Velocity**: [recent progress rate]
+📈 **Implementation Velocity**: [recent progress rate in @project/]
 
 ### Role Progress
 | Role | Workflow Stage | Completed Tasks | Active Tasks | Blockers |
@@ -78,18 +92,24 @@ Code State: [git hash or code snapshot reference]
 - Deprecated: [list of contracts marked for deprecation]
 - New: [list of newly created contracts]
 
-## Code State
+## Project Code State (@project/)
 💻 **Current Code Status**:
 - Last Commit: [hash and message if available]
-- Working Directory: [clean/modified]
-- Staged Changes: [count if any]
-- Recent Changes: [summary of last few commits]
+- Working Directory: [clean/modified files in @project/]
+- Staged Changes: [count if any in @project/]
+- Recent Changes: [summary of last few commits in @project/]
 
 🧪 **Quality Status**:
-- Tests Passing: [status]
-- Code Quality: [lint/quality check status]
-- Security Scans: [status]
-- Performance: [any performance metrics]
+- Tests Passing: [status from @project/tests/]
+- Code Quality: [assessment of @project/src/]
+- Security Review: [security status of @project/]
+- Performance: [performance metrics from @project/]
+
+📁 **Directory Status**:
+- @project/src/: [file count and structure assessment]
+- @project/tests/: [test coverage and quality]
+- @project/docs/: [documentation completeness]
+- @project/config/: [configuration status]
 
 ## Dependencies & Assumptions
 🔗 **Cross-Role Dependencies**:
