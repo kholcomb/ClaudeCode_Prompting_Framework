@@ -1,6 +1,6 @@
-# Multi-Agent Development Team Framework
+# Multi-Persona Development Team Framework
 
-A prompt engineering template that enables Claude Code to assist with software development through specialized team roles, providing structured workflows and organized project management.
+A prompt engineering template that enables Claude Code to assist with software development through specialized personas, providing structured workflows and organized task management.
 
 ## Table of Contents
 
@@ -10,7 +10,7 @@ A prompt engineering template that enables Claude Code to assist with software d
 - [Getting Started](#getting-started)
 - [Setup Guide](#setup-guide)
 - [Customization](#customization)
-- [Team Roles & Workflows](#team-roles--workflows)
+- [Team Personas & Task Workflows](#team-personas--task-workflows)
 - [Framework Components](#framework-components)
 - [Usage Examples](#usage-examples)
 - [Best Practices](#best-practices)
@@ -20,12 +20,12 @@ A prompt engineering template that enables Claude Code to assist with software d
 
 ## Overview
 
-This framework is a **prompt engineering template** designed to enhance how Claude Code assists with software development projects. By providing structured instructions in CLAUDE.md, it enables Claude to operate with role-based expertise, similar to working with a specialized development team.
+This framework is a **prompt engineering template** designed to enhance how Claude Code assists with software development projects. By providing structured instructions in CLAUDE.md, it enables Claude to operate with persona-based expertise, similar to working with a specialized development team.
 
 ### What This Framework Is
 
 - **A directory structure template** with organized folders for specifications, artifacts, and project code
-- **A comprehensive CLAUDE.md file** that instructs Claude Code on role-based development workflows
+- **A comprehensive CLAUDE.md file** that instructs Claude Code on persona-based development workflows
 - **A session management approach** for maintaining context across Claude Code interactions
 - **A methodology** for organizing complex development projects with AI assistance
 
@@ -38,37 +38,37 @@ This framework is a **prompt engineering template** designed to enhance how Clau
 
 ### Why Use This Framework?
 
-- **Specialized Responses**: Claude adopts specific expertise based on the active role
-- **Structured Workflows**: Each role follows defined processes for consistency
+- **Specialized Responses**: Claude adopts specific expertise based on the active persona
+- **Structured Workflows**: Each persona follows defined processes for consistency
 - **Organized Development**: Clear separation of concerns across different aspects
 - **Context Persistence**: Session state helps maintain continuity across interactions
 - **Better Documentation**: Structured approach to maintaining project documentation
 
 ## Key Features
 
-### Autonomous Subagent Architecture
-- Each role operates as an independent subagent capable of parallel execution
+### Autonomous Persona Architecture
+- Each persona operates as an independent agent capable of parallel execution
 - True concurrent development through the Task tool
 - Multi-branch development support for isolated feature work
 - Asynchronous coordination through message queues and contracts
 
-### Role-Based Development
-- 8 specialized roles covering all aspects of modern software development
-- Each role follows specific workflows optimized for their responsibilities
+### Persona-Based Development
+- 8 specialized personas covering all aspects of modern software development
+- Each persona follows specific workflows optimized for their responsibilities
 - Enhanced exploration phases with mandatory codebase analysis
-- Clear handoffs and contract-based communication between roles
+- Clear handoffs and contract-based communication between personas
 
 ### Intelligent Context Management
 - Efficient mode for token optimization during long sessions
 - Smart context pruning strategies
 - Git-aware session state tracking
-- Branch-specific context preservation per subagent
+- Branch-specific context preservation per persona
 
 ### Quality Focus
-- Quality checkpoints defined in each role's workflow
+- Quality checkpoints defined in each persona's workflow
 - Testing strategies incorporated into development process
-- Code review considerations built into role behaviors
-- Security and performance awareness in relevant roles
+- Code review considerations built into persona behaviors
+- Security and performance awareness in relevant personas
 
 ### Documentation Structure
 - Organized specifications in dedicated directories
@@ -234,7 +234,7 @@ The framework uses a contract-based communication system:
    Human: What's our current project status? What tasks are in progress?
    ```
 
-## Team Roles & Workflows
+## Team Personas & Task Workflows
 
 ### Project Manager
 **Workflow**: `coordinate → plan → track → communicate`

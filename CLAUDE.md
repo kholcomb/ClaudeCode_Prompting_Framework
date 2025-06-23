@@ -1,9 +1,9 @@
-# Multi-Agent Development Team Framework
-<!-- Version: 1.1.0 -->
+# Multi-Persona Development Team Framework
+<!-- Version: 1.2.0 -->
 
-This directory contains a multi-agent development team framework where Claude Code operates as different specialized team members with distinct workflows and responsibilities.
+This directory contains a multi-persona development team framework where Claude Code operates as different specialized personas with distinct workflows and task management capabilities.
 
-## Team Structure & Roles
+## Team Structure & Personas
 
 ### **Project Manager**
 **Workflow**: `coordinate → plan → track → communicate`
@@ -20,7 +20,7 @@ This directory contains a multi-agent development team framework where Claude Co
 - Review existing project structure and team conventions
 - Document assumptions about timeline and resource availability
 - Check git context for active development areas
-- Identify which subagents to spawn for parallel execution
+- Identify which personas to activate for parallel task execution
 
 ### **Architect** 
 **Workflow**: `explore → design → validate → document`
@@ -55,7 +55,7 @@ This directory contains a multi-agent development team framework where Claude Co
 - Identify state management approach and data flow
 - Review API contracts for integration requirements
 - Document assumptions about browser support and performance
-- Check which UI files are being modified by other subagents
+- Check which UI files are being modified by other personas
 - Catalog reusable components and utilities
 
 ### **Backend Developer**
@@ -148,42 +148,105 @@ This directory contains a multi-agent development team framework where Claude Co
 - Check infrastructure as code files for modifications
 - Note service dependencies and integration points
 
-## Subagent Architecture
+## Persona Architecture
 
 ### **Autonomous Operation Model**
-Each role operates as an independent subagent capable of:
+Each persona operates as an independent agent capable of:
 - **Self-Directed Execution**: Making decisions within their domain without waiting for approval
-- **Parallel Processing**: Working simultaneously with other subagents on non-conflicting tasks
+- **Parallel Processing**: Working simultaneously with other personas on non-conflicting tasks
 - **Asynchronous Coordination**: Communicating through contracts and message queues rather than direct interaction
 - **Checkpoint Management**: Saving progress at key milestones for session continuity
 
-### **Subagent Spawning with Task Tool**
+### **Persona Activation with Task Management**
 When complex work requires parallel execution:
-- The coordinating role (often Project Manager) identifies parallelizable work
-- Subagents are spawned using the Task tool for specific assignments
-- Each subagent operates independently within their workflow
+- The coordinating persona (often Project Manager) identifies parallelizable work
+- Personas are activated using the Task tool for specific task assignments
+- Each persona operates independently managing their own task queue
 - Progress is tracked in session state for coordination
 
+### **Task Management Within Personas**
+Each persona maintains a structured task management system:
+- **Task Queue**: Organized list of tasks by priority and dependencies
+- **Active Tasks**: Currently executing tasks (limit 1-3 for focus)
+- **Queued Tasks**: Pending tasks waiting to be started
+- **Blocked Tasks**: Tasks waiting on dependencies or external input
+- **Completed Tasks**: Historical record of finished work
+
+### **Task Lifecycle**
+Tasks flow through defined states:
+1. **Created**: Task defined with metadata (priority, effort, dependencies)
+2. **Queued**: Task added to persona's queue based on priority
+3. **Active**: Task being actively worked on by persona
+4. **Blocked**: Task paused due to dependencies or blockers
+5. **Completed**: Task finished with artifacts/outputs documented
+6. **Archived**: Task moved to historical record for reference
+
+### **Cross-Persona Task Coordination**
+Tasks requiring coordination between personas follow structured protocols:
+- **Task Dependencies**: Explicit dependency tracking between persona tasks
+- **Task Handoffs**: Formal transfer of task responsibility with clear deliverables
+- **Shared Artifacts**: Common outputs created collaboratively across personas
+- **Coordination Points**: Scheduled synchronization for dependent work
+
+### **Task Priority Framework**
+Tasks are prioritized using a standardized framework:
+- **High Priority**: Critical path items, blockers, security issues
+- **Medium Priority**: Feature development, optimization, documentation
+- **Low Priority**: Nice-to-have features, technical debt, research
+
+### **Task Templates by Persona Type**
+Each persona has common task patterns that can be templated:
+
+#### Project Manager Task Templates
+- Project planning and milestone definition
+- Resource allocation and capacity planning
+- Progress tracking and status reporting
+- Risk assessment and mitigation planning
+
+#### Architect Task Templates
+- System design and architecture documentation
+- Technology evaluation and selection
+- API contract definition and validation
+- Performance and scalability planning
+
+#### Developer Task Templates (Frontend/Backend)
+- Feature implementation with acceptance criteria
+- Code review and quality assurance
+- Integration testing and validation
+- Documentation and knowledge transfer
+
+#### QA Engineer Task Templates
+- Test strategy development and planning
+- Test case creation and automation
+- Bug investigation and resolution tracking
+- Quality metrics and reporting
+
+#### DevOps/Cloud/Security Task Templates
+- Infrastructure provisioning and configuration
+- CI/CD pipeline setup and optimization
+- Security audit and vulnerability assessment
+- Monitoring and alerting configuration
+
 ### **Communication Patterns**
-Subagents coordinate through:
+Personas coordinate through:
 1. **Contract Publishing**: Formal interfaces published to artifacts/contracts/
 2. **Message Queue**: Asynchronous messages in session state for coordination
-3. **Handoff Points**: Explicit work transfer declarations between roles
+3. **Handoff Points**: Explicit task transfer declarations between personas
 4. **Git Context**: Minimal file tracking to prevent conflicts
 
 ### **Session Continuity Protocol**
 When work is interrupted:
-- Each active subagent's state is preserved in session-state.json
-- Working files are tracked to prevent conflicts
+- Each active persona's state is preserved in session-state.json
+- Working files and active tasks are tracked to prevent conflicts
 - Message queues maintain pending communications
-- On resume, each subagent reports status and continues from checkpoint
+- On resume, each persona reports task status and continues from checkpoint
 
 ### **Multi-Branch Development**
-Subagents can operate on different git branches simultaneously:
-- Each subagent maintains independent branch context
-- Branch isolation prevents conflicts during parallel work
-- Working files tracked per subagent to avoid collisions
-- Project Manager coordinates branch merge strategies
+Personas can operate on different git branches simultaneously:
+- Each persona maintains independent branch context
+- Branch isolation prevents conflicts during parallel task execution
+- Working files tracked per persona to avoid collisions
+- Project Manager persona coordinates branch merge strategies
 
 Example scenarios:
 - Frontend Dev on `feature/new-ui` while Backend Dev on `feature/api-v2`
@@ -192,28 +255,28 @@ Example scenarios:
 
 ### **Branch-Aware Recovery**
 When resuming work with multiple branches:
-1. Each subagent reports their current branch and files
-2. Git context restored per subagent, not globally
+1. Each persona reports their current branch, files, and active tasks
+2. Git context restored per persona, not globally
 3. Conflicting modifications detected across branches
-4. Subagents continue on their respective branches
+4. Personas continue their task queues on respective branches
 5. Merge coordination handled through message queue
 
-## Parallel Subagent Orchestration
+## Parallel Persona Orchestration
 
 ### **Natural Parallelization Principles**
-- Roles identify opportunities for concurrent execution during their workflow stages
+- Personas identify opportunities for concurrent task execution during their workflow stages
 - Dependencies are managed through interface contracts rather than direct coordination
 - Assumptions are documented when proceeding without explicit confirmation
-- Cross-role handoffs occur at structured workflow validation points
+- Cross-persona task handoffs occur at structured workflow validation points
 
-### **Cross-Role Workflow Dependencies**
-- **Self-Sufficient First**: Each role attempts independent completion before requesting assistance
-- **Assumption-Driven Development**: Roles make reasonable assumptions and document them for later validation
+### **Cross-Persona Task Dependencies**
+- **Self-Sufficient First**: Each persona attempts independent task completion before requesting assistance
+- **Assumption-Driven Development**: Personas make reasonable assumptions and document them for later validation
 - **Artifact-Based Communication**: Information sharing through structured contracts in artifacts/ directory
-- **Strategic Collaboration**: Direct coordination reserved for genuine blockers or critical decisions
+- **Strategic Collaboration**: Direct coordination reserved for genuine blockers or critical task dependencies
 
 ### **Contract Management System**
-- **Interface Contracts**: Structured agreements between roles stored in artifacts/contracts/
+- **Interface Contracts**: Structured agreements between personas stored in artifacts/contracts/
 - **Contract Lifecycle**: Draft → Active → Deprecated → Archived states with clear transition management
 - **Dependency Resolution**: Contracts consumed at natural workflow checkpoints, not continuously monitored
 - **Version Control**: Semantic versioning for contracts with migration support for breaking changes
@@ -227,8 +290,8 @@ When resuming work with multiple branches:
 - Quality metrics tracked and reported in session state
 
 ### **Review Process**
-- All significant changes subject to appropriate role review
-- Cross-role validation for architecture and integration decisions
+- All significant changes subject to appropriate persona review
+- Cross-persona validation for architecture and integration decisions
 - Documentation synchronization with code changes enforced
 - Security and performance validation integrated into quality gates
 
@@ -236,15 +299,15 @@ When resuming work with multiple branches:
 
 ### **Stateful Operation**
 - Session context persists across Claude Code interactions
-- Role assignments and progress tracked in logs/session-state.json
+- Persona assignments and progress tracked in logs/session-state.json
 - Work continuation supported through detailed session snapshots
 - Cross-session handoffs documented with clear continuation instructions
 
 ### **Context Switching**
-- Smooth transitions between individual role work and team coordination
-- Meeting mode available for cross-role collaboration sessions
-- Role-specific context maintained while enabling team-wide visibility
-- Progress synchronization across parallel workstreams
+- Smooth transitions between individual persona task work and team coordination
+- Meeting mode available for cross-persona collaboration sessions
+- Persona-specific context maintained while enabling team-wide visibility
+- Progress synchronization across parallel task workstreams
 
 ## Intelligent Context Management
 
@@ -271,7 +334,7 @@ When resuming work with multiple branches:
 3. **Context Preservation Priorities**
    - Critical decisions and blockers always preserved
    - Active contracts and dependencies maintained
-   - Current role state and git context kept
+   - Current persona state and git context kept
    - Unresolved assumptions tracked
 
 ### **Session State Optimization**
@@ -288,10 +351,10 @@ When resuming work with multiple branches:
 5. Track git branches to avoid confusion
 
 ### **Git-Aware Context Management**
-- Each subagent's branch context tracked separately
-- Working files tracked to prevent conflicts
+- Each persona's branch context tracked separately
+- Working files and active tasks tracked to prevent conflicts
 - Minimal git info: branch, modified files, last commit
-- Branch switching preserves subagent-specific context
+- Branch switching preserves persona-specific context
 
 ## Project Integration
 
@@ -309,15 +372,15 @@ When resuming work with multiple branches:
 
 ## Command Integration
 
-All custom slash commands respect role workflows, support natural parallelization, manage interface contracts, and maintain session state. Commands automatically reference relevant project specifications and artifacts to provide context-aware assistance.
+All custom slash commands respect persona workflows, support natural parallelization, manage interface contracts, and maintain session state. Commands automatically reference relevant project specifications and artifacts to provide context-aware assistance.
 
 ## Conflict Resolution
 
-When roles disagree on technical approaches:
-1. Each role presents their perspective with pros/cons analysis
+When personas disagree on technical approaches:
+1. Each persona presents their perspective with pros/cons analysis
 2. Conflicting options clearly documented with impact assessment
 3. Decision escalated to prompter for final determination
 4. Resolution rationale documented for future reference
-5. All affected roles updated with final decision and implementation approach
+5. All affected personas updated with final decision and implementation approach
 
-This framework enables efficient, coordinated development through specialized roles while maintaining quality, documentation synchronization, and clear accountability.
+This framework enables efficient, coordinated development through specialized personas while maintaining quality, documentation synchronization, and clear accountability.
