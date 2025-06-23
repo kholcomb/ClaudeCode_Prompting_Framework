@@ -80,6 +80,7 @@ init_directories() {
     mkdir -p artifacts/{contracts/{api,data,infrastructure,security,testing},deliverables}
     mkdir -p specs/{apis,design}
     mkdir -p project/{src,tests,docs,config}
+    mkdir -p templates
     mkdir -p .vscode
     
     print_success "Directory structure created"
@@ -256,7 +257,7 @@ for file in "${required_files[@]}"; do
 done
 
 # Check required directories
-required_dirs=("project" "specs" "artifacts" "logs" "templates")
+required_dirs=("project" "specs" "artifacts" "logs")
 for dir in "${required_dirs[@]}"; do
     if [[ ! -d "$dir" ]]; then
         echo "❌ Missing required directory: $dir"
@@ -265,6 +266,13 @@ for dir in "${required_dirs[@]}"; do
         echo "✅ Found: $dir/"
     fi
 done
+
+# Check optional directories
+if [[ -d "templates" ]]; then
+    echo "✅ Found: templates/"
+else
+    echo "ℹ️  No templates/ directory (optional)"
+fi
 
 # Check git setup
 if [[ -d project/.git ]]; then
