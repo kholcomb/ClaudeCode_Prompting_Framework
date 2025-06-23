@@ -46,7 +46,6 @@ setup_from_remote() {
         "LICENSE"
         "CHANGELOG.md"
         ".gitignore"
-        "update-framework.sh"
         "specs/requirements.md"
         "specs/project-plan.md"
         "specs/architecture.md"
@@ -58,7 +57,6 @@ setup_from_remote() {
         "templates/persona-coordination-template.md"
         "templates/status-report-template.md"
         "templates/task-template.md"
-        "logs/session-state.json.template"
         "artifacts/contracts/api/CLAUDE.md"
         "artifacts/contracts/data/CLAUDE.md"
         "artifacts/contracts/infrastructure/CLAUDE.md"
@@ -96,6 +94,15 @@ setup_from_remote() {
             echo "  ✓ $file"
         fi
     done
+    
+    # Download and setup session state template as active session file
+    print_info "Setting up session state..."
+    mkdir -p logs
+    if $DOWNLOAD_CMD "$REPO_URL/logs/session-state.json.template" > "logs/session-state.json" 2>/dev/null; then
+        echo "  ✓ logs/session-state.json (from template)"
+    else
+        print_warning "Failed to download session state template"
+    fi
     
     print_success "Framework files downloaded successfully"
     
@@ -660,7 +667,7 @@ show_completion() {
     if [[ "$1" == "--remote" ]]; then
         echo -e "${CYAN}Remote Setup Complete:${NC}"
         echo "  • Framework downloaded from: $REPO_URL"
-        echo "  • You can update with: ./update-framework.sh"
+        echo "  • Framework files installed and configured"
         echo "  • Consider adding this directory to version control"
     fi
     echo
