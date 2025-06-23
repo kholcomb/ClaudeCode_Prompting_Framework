@@ -317,7 +317,7 @@ custom_setup() {
     
     # Optional: Project name
     print_info "Note: Project name will be saved to logs/session-state.json (excluded from git by default)"
-    read -p "$(echo -e ${CYAN}Project name (optional, press Enter to skip): ${NC})" PROJECT_NAME
+    read -p "$(echo -e "${CYAN}Project name (optional, press Enter to skip): ${NC}")" PROJECT_NAME
     
     # Optional: Select personas
     echo
@@ -325,7 +325,7 @@ custom_setup() {
     echo "1) All personas (default)"
     echo "2) Project Manager + Architect only"
     echo "3) Custom selection"
-    read -p "$(echo -e ${CYAN}Choice [1-3, press Enter for all]: ${NC})" persona_choice
+    read -p "$(echo -e "${CYAN}Choice [1-3, press Enter for all]: ${NC}")" persona_choice
     
     personas_json=""
     case "${persona_choice:-1}" in
@@ -340,7 +340,7 @@ custom_setup() {
             echo "Select personas (space-separated numbers):"
             echo "1) Project Manager  2) Architect  3) Frontend Dev  4) Backend Dev"
             echo "5) QA Engineer  6) DevOps  7) Security  8) Cloud Engineer"
-            read -p "$(echo -e ${CYAN}Enter numbers (e.g., 1 2 5): ${NC})" -a selections
+            read -p "$(echo -e "${CYAN}Enter numbers (e.g., 1 2 5): ${NC}")" -a selections
             
             if [[ ${#selections[@]} -gt 0 ]]; then
                 personas_json="{"
@@ -367,7 +367,7 @@ custom_setup() {
     
     # Optional: VS Code setup
     echo
-    read -p "$(echo -e ${CYAN}Configure VS Code workspace? [Y/n]: ${NC})" vscode_setup
+    read -p "$(echo -e "${CYAN}Configure VS Code workspace? [Y/n]: ${NC}")" vscode_setup
     if [[ "$(echo "$vscode_setup" | tr '[:upper:]' '[:lower:]')" != "n" ]]; then
         setup_vscode
         print_success "VS Code configured"
@@ -375,7 +375,7 @@ custom_setup() {
     
     # Optional: Git setup
     echo
-    read -p "$(echo -e ${CYAN}Initialize git in project/ directory? [y/N]: ${NC})" git_setup
+    read -p "$(echo -e "${CYAN}Initialize git in project/ directory? [y/N]: ${NC}")" git_setup
     if [[ "$(echo "$git_setup" | tr '[:upper:]' '[:lower:]')" == "y" ]]; then
         cd project/
         git init
@@ -431,7 +431,7 @@ main() {
     # Check if already set up
     if [[ -f logs/session-state.json ]] && [[ -d artifacts/contracts ]]; then
         print_warning "Framework appears to be already set up"
-        read -p "$(echo -e ${CYAN}Continue anyway? [y/N]: ${NC})" continue_setup
+        read -p "$(echo -e "${CYAN}Continue anyway? [y/N]: ${NC}")" continue_setup
         if [[ "$(echo "$continue_setup" | tr '[:upper:]' '[:lower:]')" != "y" ]]; then
             print_info "Setup cancelled"
             exit 0
@@ -445,7 +445,7 @@ main() {
     echo "  ${BLUE}[C]ustom${NC} - Choose what to configure"
     echo "  ${RED}[E]xit${NC} - Cancel setup"
     echo
-    read -p "$(echo -e ${CYAN}Select setup mode [Q/c/e]: ${NC})" setup_mode
+    read -p "$(echo -e "${CYAN}Select setup mode [Q/c/e]: ${NC}")" setup_mode
     
     case "$(echo "$setup_mode" | tr '[:upper:]' '[:lower:]')" in
         c|custom)
