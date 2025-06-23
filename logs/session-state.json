@@ -139,6 +139,29 @@
     "pending_stakeholder_decisions": [],
     "team_coordination_notes": []
   },
+  "context_management": {
+    "mode": "normal",
+    "context_usage_estimate": "low",
+    "last_pruning": null,
+    "compression_active": false,
+    "pruning_triggers": []
+  },
+  "subagent_coordination": {
+    "active_subagents": [],
+    "parallel_tasks": [],
+    "last_sync": null,
+    "spawn_history": [],
+    "message_queue": [],
+    "handoff_points": {
+      "pending": [],
+      "completed": []
+    }
+  },
+  "git_context": {
+    "branch": null,
+    "modified_files": [],
+    "last_commit": null
+  },
   "metadata": {
     "framework_version": "1.0.0",
     "last_checkpoint": null,

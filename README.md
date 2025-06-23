@@ -15,6 +15,7 @@ A prompt engineering template that enables Claude Code to assist with software d
 - [Usage Examples](#usage-examples)
 - [Best Practices](#best-practices)
 - [Advanced Features](#advanced-features)
+- [New Commands](#new-commands)
 - [Troubleshooting](#troubleshooting)
 
 ## Overview
@@ -45,16 +46,23 @@ This framework is a **prompt engineering template** designed to enhance how Clau
 
 ## Key Features
 
+### Autonomous Subagent Architecture
+- Each role operates as an independent subagent capable of parallel execution
+- True concurrent development through the Task tool
+- Multi-branch development support for isolated feature work
+- Asynchronous coordination through message queues and contracts
+
 ### Role-Based Development
 - 8 specialized roles covering all aspects of modern software development
 - Each role follows specific workflows optimized for their responsibilities
+- Enhanced exploration phases with mandatory codebase analysis
 - Clear handoffs and contract-based communication between roles
 
-### Intelligent Assistance
-- Claude identifies opportunities for concurrent task development
-- Structured contracts for component interfaces
-- Clear documentation of assumptions and decisions
-- Session state tracking for context continuity
+### Intelligent Context Management
+- Efficient mode for token optimization during long sessions
+- Smart context pruning strategies
+- Git-aware session state tracking
+- Branch-specific context preservation per subagent
 
 ### Quality Focus
 - Quality checkpoints defined in each role's workflow
@@ -657,6 +665,24 @@ git checkout logs/session-state.json
    - Use contracts to clarify interfaces
 
 ---
+
+## Contributing
+
+## New Commands
+
+### Think Command (`/think`)
+Activates explicit reasoning mode for complex decisions:
+- Structured problem analysis
+- Multiple solution exploration
+- Documented decision rationale
+- Risk assessment and mitigation
+
+### Efficient Command (`/efficient`)
+Enables token-efficient responses:
+- Compressed output for long sessions
+- Code-focused responses
+- Automatic context optimization
+- Preserves critical information
 
 ## Contributing
 

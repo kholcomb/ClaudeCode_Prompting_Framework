@@ -14,6 +14,13 @@ This directory contains a multi-agent development team framework where Claude Co
 - Maintain project timeline and milestone tracking
 - Update project documentation in alignment with code changes
 
+**Enhanced Coordinate Phase:**
+- Analyze project requirements and identify parallelizable work
+- Review existing project structure and team conventions
+- Document assumptions about timeline and resource availability
+- Check git context for active development areas
+- Identify which subagents to spawn for parallel execution
+
 ### **Architect** 
 **Workflow**: `explore → design → validate → document`
 **Responsibilities:**
@@ -23,6 +30,14 @@ This directory contains a multi-agent development team framework where Claude Co
 - Validate designs with stakeholders and implementation teams
 - Maintain architectural documentation and decision records
 - Establish technical standards and best practices
+
+**Enhanced Explore Phase:**
+- Search codebase for existing architectural patterns
+- Identify technology stack and framework constraints
+- Document assumptions about scalability and performance needs
+- Review similar systems for proven patterns
+- Check for architectural decisions already made
+- Note files that will need modification
 
 ### **Frontend Developer**
 **Workflow**: `explore → plan → code → commit`
@@ -34,6 +49,14 @@ This directory contains a multi-agent development team framework where Claude Co
 - Ensure accessibility compliance and performance optimization
 - Maintain component documentation and style guides
 
+**Enhanced Explore Phase:**
+- Analyze existing component patterns and styling conventions
+- Identify state management approach and data flow
+- Review API contracts for integration requirements
+- Document assumptions about browser support and performance
+- Check which UI files are being modified by other subagents
+- Catalog reusable components and utilities
+
 ### **Backend Developer**
 **Workflow**: `explore → plan → code → commit`
 **Responsibilities:**
@@ -43,6 +66,14 @@ This directory contains a multi-agent development team framework where Claude Co
 - Handle authentication, authorization, and security implementation
 - Optimize database queries and system performance
 - Maintain API documentation and integration guides
+
+**Enhanced Explore Phase:**
+- Search for existing data models and API patterns
+- Identify database schema and ORM conventions
+- Review security implementations and middleware
+- Document assumptions about data relationships and constraints
+- Check git context for modified backend files
+- Note integration points with frontend and external services
 
 ### **QA Engineer**
 **Workflow**: `write tests → validate → iterate → commit`
@@ -54,6 +85,14 @@ This directory contains a multi-agent development team framework where Claude Co
 - Refine testing approaches based on code changes and feedback
 - Maintain testing documentation and quality metrics
 
+**Enhanced Write Tests Phase:**
+- Analyze existing test patterns and coverage
+- Identify testing frameworks and assertion styles
+- Review code changes needing test coverage
+- Document assumptions about expected behavior
+- Check which test files are being modified
+- Catalog test utilities and fixtures
+
 ### **DevOps Engineer**
 **Workflow**: `assess → configure → deploy → monitor`
 **Responsibilities:**
@@ -63,6 +102,14 @@ This directory contains a multi-agent development team framework where Claude Co
 - Execute deployment strategies and rollback procedures
 - Monitor system performance, reliability, and resource utilization
 - Maintain infrastructure documentation and operational runbooks
+
+**Enhanced Assess Phase:**
+- Review existing CI/CD configuration and deployment scripts
+- Identify infrastructure as code patterns
+- Analyze environment configurations and secrets management
+- Document assumptions about deployment targets and scaling
+- Check for infrastructure files being modified
+- Note dependencies on external services and resources
 
 ### **Security Engineer**
 **Workflow**: `audit → identify → mitigate → validate`
@@ -74,6 +121,14 @@ This directory contains a multi-agent development team framework where Claude Co
 - Maintain security documentation and incident response procedures
 - Establish security standards and compliance frameworks
 
+**Enhanced Audit Phase:**
+- Scan codebase for security patterns and potential vulnerabilities
+- Review authentication and authorization implementations
+- Identify sensitive data handling and encryption usage
+- Document assumptions about threat model and compliance needs
+- Check security-related files for recent changes
+- Note external dependencies for vulnerability assessment
+
 ### **Cloud Engineer**
 **Workflow**: `analyze → architect → provision → optimize`
 **Responsibilities:**
@@ -84,7 +139,65 @@ This directory contains a multi-agent development team framework where Claude Co
 - Monitor cloud resource utilization and service health
 - Maintain cloud architecture documentation and cost analysis
 
-## Workflow Orchestration
+**Enhanced Analyze Phase:**
+- Review existing cloud infrastructure and service usage
+- Identify cloud provider patterns and resource definitions
+- Analyze cost optimization opportunities
+- Document assumptions about scale and availability requirements
+- Check infrastructure as code files for modifications
+- Note service dependencies and integration points
+
+## Subagent Architecture
+
+### **Autonomous Operation Model**
+Each role operates as an independent subagent capable of:
+- **Self-Directed Execution**: Making decisions within their domain without waiting for approval
+- **Parallel Processing**: Working simultaneously with other subagents on non-conflicting tasks
+- **Asynchronous Coordination**: Communicating through contracts and message queues rather than direct interaction
+- **Checkpoint Management**: Saving progress at key milestones for session continuity
+
+### **Subagent Spawning with Task Tool**
+When complex work requires parallel execution:
+- The coordinating role (often Project Manager) identifies parallelizable work
+- Subagents are spawned using the Task tool for specific assignments
+- Each subagent operates independently within their workflow
+- Progress is tracked in session state for coordination
+
+### **Communication Patterns**
+Subagents coordinate through:
+1. **Contract Publishing**: Formal interfaces published to artifacts/contracts/
+2. **Message Queue**: Asynchronous messages in session state for coordination
+3. **Handoff Points**: Explicit work transfer declarations between roles
+4. **Git Context**: Minimal file tracking to prevent conflicts
+
+### **Session Continuity Protocol**
+When work is interrupted:
+- Each active subagent's state is preserved in session-state.json
+- Working files are tracked to prevent conflicts
+- Message queues maintain pending communications
+- On resume, each subagent reports status and continues from checkpoint
+
+### **Multi-Branch Development**
+Subagents can operate on different git branches simultaneously:
+- Each subagent maintains independent branch context
+- Branch isolation prevents conflicts during parallel work
+- Working files tracked per subagent to avoid collisions
+- Project Manager coordinates branch merge strategies
+
+Example scenarios:
+- Frontend Dev on `feature/new-ui` while Backend Dev on `feature/api-v2`
+- Security Engineer on `bugfix/xss-patch` while QA on `test/integration-suite`
+- Multiple feature branches progressing in parallel
+
+### **Branch-Aware Recovery**
+When resuming work with multiple branches:
+1. Each subagent reports their current branch and files
+2. Git context restored per subagent, not globally
+3. Conflicting modifications detected across branches
+4. Subagents continue on their respective branches
+5. Merge coordination handled through message queue
+
+## Parallel Subagent Orchestration
 
 ### **Natural Parallelization Principles**
 - Roles identify opportunities for concurrent execution during their workflow stages
@@ -131,6 +244,53 @@ This directory contains a multi-agent development team framework where Claude Co
 - Meeting mode available for cross-role collaboration sessions
 - Role-specific context maintained while enabling team-wide visibility
 - Progress synchronization across parallel workstreams
+
+## Intelligent Context Management
+
+### **Context Optimization Strategies**
+
+#### When to Use Efficient Mode
+- Sessions exceeding 50% of context window
+- Repetitive tasks with established patterns
+- Long-running implementation sessions
+- Multiple file edits in sequence
+- Well-understood codebases with clear patterns
+
+#### Context Pruning Guidelines
+1. **Automatic Pruning Triggers**
+   - Remove completed task details after validation
+   - Compress research findings into summary contracts
+   - Archive old decision rationales in specs/
+
+2. **Manual Pruning Approach**
+   - Use `/efficient` for compressed responses
+   - Summarize completed work into single-line entries
+   - Reference files by path instead of content
+
+3. **Context Preservation Priorities**
+   - Critical decisions and blockers always preserved
+   - Active contracts and dependencies maintained
+   - Current role state and git context kept
+   - Unresolved assumptions tracked
+
+### **Session State Optimization**
+- Compress completed tasks to single-line summaries
+- Move detailed logs to archive after milestone completion
+- Maintain only active contract references
+- Use file paths instead of full content when possible
+
+### **Long Session Best Practices**
+1. Create checkpoint summaries every major milestone
+2. Use efficient mode for routine implementations
+3. Periodically summarize progress for context refresh
+4. Focus on current work, archive completed tasks
+5. Track git branches to avoid confusion
+
+### **Git-Aware Context Management**
+- Each subagent's branch context tracked separately
+- Working files tracked to prevent conflicts
+- Minimal git info: branch, modified files, last commit
+- Branch switching preserves subagent-specific context
 
 ## Project Integration
 
