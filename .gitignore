@@ -5,6 +5,7 @@
 logs/archive/
 logs/checkpoints/
 logs/*.log
+logs/session-state.json
 
 # OS files
 .DS_Store
