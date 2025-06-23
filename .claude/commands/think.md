@@ -1,4 +1,5 @@
 # Think Command
+<!-- Version: 1.1.0 -->
 
 Activates explicit reasoning mode for complex decision-making and architectural choices.
 

@@ -1,4 +1,5 @@
 # Multi-Agent Development Team Framework
+<!-- Version: 1.1.0 -->
 
 This directory contains a multi-agent development team framework where Claude Code operates as different specialized team members with distinct workflows and responsibilities.
 

@@ -1,4 +1,5 @@
 # Efficient Command
+<!-- Version: 1.1.0 -->
 
 Enables token-efficient response mode for long sessions and repetitive tasks.
 
