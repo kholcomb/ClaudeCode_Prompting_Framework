@@ -35,8 +35,8 @@ status: draft|active|deprecated|archived
 version: x.y.z
 created: YYYY-MM-DD
 last_updated: YYYY-MM-DD
-owner: [role-name]
-consumers: [list-of-consuming-roles]
+owner: [persona-name]
+consumers: [list-of-consuming-personas]
 data_classification: public|internal|confidential|restricted
 superseded_by: [contract-name if superseded]
 deprecation_date: YYYY-MM-DD

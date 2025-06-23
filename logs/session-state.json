@@ -7,13 +7,21 @@
     "project_name": "[Project Name]",
     "current_phase": "planning"
   },
-  "roles": {
+  "personas": {
     "project_manager": {
       "status": "idle",
       "current_workflow_stage": "coordinate",
-      "active_tasks": [],
-      "completed_tasks": [],
-      "blocked_tasks": [],
+      "task_queue": {
+        "active_tasks": [],
+        "queued_tasks": [],
+        "completed_tasks": [],
+        "blocked_tasks": []
+      },
+      "task_management": {
+        "task_priorities": ["high", "medium", "low"],
+        "current_focus": null,
+        "task_dependencies": {}
+      },
       "assumptions": [],
       "last_activity": null,
       "context": "Ready to coordinate project activities"
@@ -21,9 +29,17 @@
     "architect": {
       "status": "idle",
       "current_workflow_stage": "explore",
-      "active_tasks": [],
-      "completed_tasks": [],
-      "blocked_tasks": [],
+      "task_queue": {
+        "active_tasks": [],
+        "queued_tasks": [],
+        "completed_tasks": [],
+        "blocked_tasks": []
+      },
+      "task_management": {
+        "task_priorities": ["high", "medium", "low"],
+        "current_focus": null,
+        "task_dependencies": {}
+      },
       "assumptions": [],
       "published_contracts": [],
       "last_activity": null,
@@ -32,9 +48,17 @@
     "frontend_developer": {
       "status": "idle",
       "current_workflow_stage": "explore",
-      "active_tasks": [],
-      "completed_tasks": [],
-      "blocked_tasks": [],
+      "task_queue": {
+        "active_tasks": [],
+        "queued_tasks": [],
+        "completed_tasks": [],
+        "blocked_tasks": []
+      },
+      "task_management": {
+        "task_priorities": ["high", "medium", "low"],
+        "current_focus": null,
+        "task_dependencies": {}
+      },
       "assumptions": [],
       "dependencies": [],
       "last_activity": null,
@@ -43,9 +67,17 @@
     "backend_developer": {
       "status": "idle",
       "current_workflow_stage": "explore",
-      "active_tasks": [],
-      "completed_tasks": [],
-      "blocked_tasks": [],
+      "task_queue": {
+        "active_tasks": [],
+        "queued_tasks": [],
+        "completed_tasks": [],
+        "blocked_tasks": []
+      },
+      "task_management": {
+        "task_priorities": ["high", "medium", "low"],
+        "current_focus": null,
+        "task_dependencies": {}
+      },
       "assumptions": [],
       "dependencies": [],
       "last_activity": null,
@@ -54,9 +86,17 @@
     "qa_engineer": {
       "status": "idle",
       "current_workflow_stage": "write_tests",
-      "active_tasks": [],
-      "completed_tasks": [],
-      "blocked_tasks": [],
+      "task_queue": {
+        "active_tasks": [],
+        "queued_tasks": [],
+        "completed_tasks": [],
+        "blocked_tasks": []
+      },
+      "task_management": {
+        "task_priorities": ["high", "medium", "low"],
+        "current_focus": null,
+        "task_dependencies": {}
+      },
       "assumptions": [],
       "quality_gates": [],
       "last_activity": null,
@@ -65,9 +105,17 @@
     "devops_engineer": {
       "status": "idle",
       "current_workflow_stage": "assess",
-      "active_tasks": [],
-      "completed_tasks": [],
-      "blocked_tasks": [],
+      "task_queue": {
+        "active_tasks": [],
+        "queued_tasks": [],
+        "completed_tasks": [],
+        "blocked_tasks": []
+      },
+      "task_management": {
+        "task_priorities": ["high", "medium", "low"],
+        "current_focus": null,
+        "task_dependencies": {}
+      },
       "assumptions": [],
       "infrastructure_status": "not_configured",
       "last_activity": null,
@@ -76,9 +124,17 @@
     "security_engineer": {
       "status": "idle",
       "current_workflow_stage": "audit",
-      "active_tasks": [],
-      "completed_tasks": [],
-      "blocked_tasks": [],
+      "task_queue": {
+        "active_tasks": [],
+        "queued_tasks": [],
+        "completed_tasks": [],
+        "blocked_tasks": []
+      },
+      "task_management": {
+        "task_priorities": ["high", "medium", "low"],
+        "current_focus": null,
+        "task_dependencies": {}
+      },
       "assumptions": [],
       "security_findings": [],
       "last_activity": null,
@@ -87,9 +143,17 @@
     "cloud_engineer": {
       "status": "idle",
       "current_workflow_stage": "analyze",
-      "active_tasks": [],
-      "completed_tasks": [],
-      "blocked_tasks": [],
+      "task_queue": {
+        "active_tasks": [],
+        "queued_tasks": [],
+        "completed_tasks": [],
+        "blocked_tasks": []
+      },
+      "task_management": {
+        "task_priorities": ["high", "medium", "low"],
+        "current_focus": null,
+        "task_dependencies": {}
+      },
       "assumptions": [],
       "cloud_resources": [],
       "last_activity": null,
@@ -146,15 +210,21 @@
     "compression_active": false,
     "pruning_triggers": []
   },
-  "subagent_coordination": {
-    "active_subagents": [],
+  "persona_coordination": {
+    "active_personas": [],
     "parallel_tasks": [],
     "last_sync": null,
-    "spawn_history": [],
+    "activation_history": [],
     "message_queue": [],
     "handoff_points": {
       "pending": [],
       "completed": []
+    },
+    "task_coordination": {
+      "cross_persona_dependencies": {},
+      "shared_task_artifacts": [],
+      "task_conflicts": [],
+      "coordination_points": []
     }
   },
   "git_context": {
@@ -163,10 +233,12 @@
     "last_commit": null
   },
   "metadata": {
-    "framework_version": "1.1.0",
-    "schema_version": "1.1.0",
+    "framework_version": "1.2.0",
+    "schema_version": "1.2.0",
     "last_checkpoint": null,
     "backup_count": 0,
-    "session_duration": 0
+    "session_duration": 0,
+    "task_management_enabled": true,
+    "persona_model": "task_queue_based"
   }
 }

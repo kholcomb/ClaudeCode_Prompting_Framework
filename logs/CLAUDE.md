@@ -1,6 +1,6 @@
 # Session Logs and State Management
 
-This directory contains session state, activity logs, and checkpoint data for the multi-agent framework.
+This directory contains session state, activity logs, and checkpoint data for the multi-persona framework with enhanced task management capabilities.
 
 ## Directory Structure
 
@@ -26,12 +26,14 @@ The `session-state.json` file tracks:
 - Project name and current phase
 - Overall status and progress
 
-### Role Status
-For each team role:
+### Persona Status
+For each team persona:
 - Current workflow stage
-- Active, completed, and blocked tasks
+- Task queue with priority and dependency tracking
+- Active, completed, blocked, and queued tasks
+- Task management metadata and coordination points
 - Assumptions and dependencies
-- Role-specific context and state
+- Persona-specific context and state
 
 ### Contract Management
 - Active contracts and their status
@@ -63,7 +65,9 @@ For each team role:
 
 The `activity.log` file captures:
 - Command executions and results
-- Role assignments and completions
+- Persona activations and task assignments
+- Task lifecycle events (created, started, completed, blocked)
+- Cross-persona coordination sessions
 - Contract publications and updates
 - Decision points and rationale
 - Error conditions and resolutions
@@ -102,16 +106,20 @@ Checkpoints provide rollback capability:
 
 ### Save Session
 Captures current state including:
-- All role contexts and assignments
+- All persona contexts and task queue states
+- Cross-persona task dependencies and coordination points
 - Contract status and consumption
 - Progress and milestone status
+- Task templates and management metadata
 - Dependencies and assumptions
 - Recent decisions and risks
 
 ### Load Session
 Restores previous state including:
-- Role context and workflow stages
+- Persona context and workflow stages
+- Complete task queue states and priorities
 - Active tasks and assignments
+- Cross-persona coordination history
 - Contract consumption state
 - Dependency relationships
 - Decision history
@@ -126,14 +134,18 @@ Resets session while preserving:
 ## Monitoring and Analytics
 
 ### Session Health
-- Active role count and utilization
+- Active persona count and task queue utilization
+- Task completion rates and cycle times
+- Cross-persona coordination effectiveness
 - Dependency resolution rates
 - Contract publication and consumption
 - Progress velocity and trends
 
 ### Performance Metrics
-- Task completion rates by role
+- Task completion rates by persona
+- Task queue efficiency and throughput
 - Average time to resolve dependencies
+- Cross-persona handoff success rates
 - Contract accuracy and stability
 - Session continuity success rates
 
@@ -141,7 +153,7 @@ Resets session while preserving:
 - Decision reversal rates
 - Assumption validation success
 - Risk mitigation effectiveness
-- Team coordination efficiency
+- Persona coordination efficiency
 
 ## Best Practices
 
@@ -162,4 +174,4 @@ Resets session while preserving:
 
 ---
 
-*Session state management enables seamless work continuity and provides comprehensive project context for all team roles.*
+*Session state management enables seamless work continuity and provides comprehensive project context for all team personas with advanced task management and coordination capabilities.*
