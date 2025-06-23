@@ -235,7 +235,17 @@ The framework uses a contract-based communication system:
    Claude: [Claude will act as Project Manager and review your specs]
    ```
 
-2. **Work with Specific Roles**:
+2. **Set Up Project Version Control** (Important First Step):
+   ```
+   Human: I need to set up git for my project. Should I initialize it in 
+   the framework root or project directory?
+   
+   Claude: You should initialize git only within the project/ directory. 
+   This keeps your project's version control separate from the framework 
+   template. Let me help you set that up...
+   ```
+
+3. **Work with Specific Personas**:
    ```
    Human: As the architect, can you design the system architecture based 
    on our requirements?
@@ -244,7 +254,7 @@ The framework uses a contract-based communication system:
    authentication system.
    ```
 
-3. **Check Progress**:
+4. **Check Progress**:
    ```
    Human: What's our current project status? What tasks are in progress?
    ```
@@ -438,8 +448,13 @@ real-time updates, and mobile support.
 Claude: I'll help coordinate the development of your task management application.
 Operating as the Project Manager, let me break this down into phases:
 
+First, let's ensure your project has proper version control setup:
+- Initialize git repository in project/ directory only
+- Set up initial project structure
+
 [Claude creates a project plan in specs/project-plan.md]
 [Updates session-state.json with project information]
+[Guides through git initialization in project/ directory]
 
 Now, as the Architect, I'll design the system architecture. Let me explore 
 the requirements and create the foundational design...
@@ -458,6 +473,7 @@ First, let me check the API contract for the task creation endpoint...
 [Claude reviews contracts in artifacts/contracts/api/]
 [Implements component in project/src/]
 [Creates tests in project/tests/]
+[Commits changes to git in project/ directory]
 [Updates session state with progress]
 ```
 
@@ -470,8 +486,10 @@ Claude: As the DevOps Engineer, I'll set up a comprehensive CI/CD pipeline.
 Let me assess the project structure and requirements...
 
 [Claude creates pipeline configuration in project/config/]
-[Documents deployment process in docs/]
+[Documents deployment process in project/docs/]
 [Updates infrastructure contracts in artifacts/]
+[Commits pipeline configuration to project git repository]
+[Sets up GitHub Actions workflows in project/.github/]
 ```
 
 ## Best Practices
