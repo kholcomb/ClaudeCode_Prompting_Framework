@@ -82,8 +82,130 @@ init_directories() {
     mkdir -p project/{src,tests,docs,config}
     mkdir -p templates
     mkdir -p .vscode
+    mkdir -p .claude/commands
     
     print_success "Directory structure created"
+}
+
+# Create Claude Code command templates
+create_claude_commands() {
+    print_header "\n⚡ Creating Claude Code Commands"
+    
+    # Create /think command
+    cat > .claude/commands/think.md << 'EOF'
+# Think Command
+
+## Description
+Engage structured reasoning mode for complex decisions and analysis.
+
+## Usage
+`/think <question or problem>`
+
+## Behavior
+- Break down complex problems systematically
+- Show step-by-step reasoning
+- Consider multiple perspectives
+- Identify assumptions and constraints
+- Provide clear conclusions with rationale
+
+## Examples
+- `/think How should we architect this microservice?`
+- `/think What are the tradeoffs between these two approaches?`
+- `/think What could go wrong with this implementation?`
+EOF
+
+    # Create /efficient command
+    cat > .claude/commands/efficient.md << 'EOF'
+# Efficient Command
+
+## Description
+Switch to token-optimized response mode for long sessions.
+
+## Usage
+`/efficient` or `/efficient <task>`
+
+## Behavior
+- Compress responses to essential information
+- Use concise language and bullet points
+- Minimize explanatory text
+- Focus on actionable outcomes
+- Preserve accuracy while reducing verbosity
+
+## When to Use
+- Long coding sessions approaching context limits
+- Repetitive tasks with established patterns
+- When you need rapid iteration cycles
+- Large codebases with many file operations
+
+## Examples
+- `/efficient` (switches mode for subsequent responses)
+- `/efficient implement these 5 similar functions`
+EOF
+
+    # Create persona command templates
+    for persona in pm architect frontend backend qa devops security cloud; do
+        case $persona in
+            pm)
+                persona_name="Project Manager"
+                workflow="coordinate → plan → track → communicate"
+                ;;
+            architect)
+                persona_name="Architect"
+                workflow="explore → design → validate → document"
+                ;;
+            frontend)
+                persona_name="Frontend Developer"
+                workflow="explore → plan → code → commit"
+                ;;
+            backend)
+                persona_name="Backend Developer"
+                workflow="explore → plan → code → commit"
+                ;;
+            qa)
+                persona_name="QA Engineer"
+                workflow="write tests → validate → iterate → commit"
+                ;;
+            devops)
+                persona_name="DevOps Engineer"
+                workflow="assess → configure → deploy → monitor"
+                ;;
+            security)
+                persona_name="Security Engineer"
+                workflow="audit → identify → mitigate → validate"
+                ;;
+            cloud)
+                persona_name="Cloud Engineer"
+                workflow="analyze → architect → provision → optimize"
+                ;;
+        esac
+        
+        cat > .claude/commands/${persona}.md << EOF
+# ${persona_name} Command
+
+## Description
+Activate ${persona_name} persona with specialized workflow and expertise.
+
+## Usage
+\`/${persona} <task or question>\`
+
+## Workflow
+${workflow}
+
+## Behavior
+- Operate within ${persona_name} domain expertise
+- Follow structured workflow appropriate to role
+- Coordinate with other personas when needed
+- Maintain role-specific documentation and artifacts
+- Use specialized tools and patterns for the role
+
+## Examples
+- \`/${persona} analyze the current system architecture\`
+- \`/${persona} plan the implementation approach\`
+- \`/${persona} review and provide feedback\`
+EOF
+    done
+    
+    print_success "Claude Code commands created"
 }
 
 # Initialize session state
@@ -257,7 +379,7 @@ for file in "${required_files[@]}"; do
 done
 
 # Check required directories
-required_dirs=("project" "specs" "artifacts" "logs")
+required_dirs=("project" "specs" "artifacts" "logs" ".claude")
 for dir in "${required_dirs[@]}"; do
     if [[ ! -d "$dir" ]]; then
         echo "❌ Missing required directory: $dir"
@@ -310,6 +432,7 @@ quick_setup() {
     print_info "Creating framework with default configuration..."
     
     init_directories
+    create_claude_commands
     init_session_state "all"
     setup_vscode
     create_helper_scripts
@@ -371,6 +494,7 @@ custom_setup() {
     
     # Initialize directories and session
     init_directories
+    create_claude_commands
     init_session_state "$personas_json"
     
     # Optional: VS Code setup
@@ -388,7 +512,7 @@ custom_setup() {
         cd project/
         git init
         echo "# Project" > README.md
-        echo -e "node_modules/\n*.log\n.env\n.DS_Store" > .gitignore
+        echo -e "node_modules/\n*.log\n.env\n.DS_Store\nsettings.local.json" > .gitignore
         git add .
         git commit -m "Initial project setup" || true
         cd ..
@@ -407,6 +531,7 @@ show_completion() {
     echo
     echo -e "${CYAN}What's been created:${NC}"
     echo "  ✓ Framework directory structure"
+    echo "  ✓ Claude Code command templates (.claude/commands/)"
     echo "  ✓ Session state configuration"
     echo "  ✓ Helper scripts (reset-session.sh, validate-setup.sh)"
     [[ -f .vscode/settings.json ]] && echo "  ✓ VS Code workspace configuration"
@@ -422,6 +547,18 @@ show_completion() {
     echo -e "${CYAN}Helper Scripts:${NC}"
     echo "  • Reset session: ${GREEN}./reset-session.sh${NC}"
     echo "  • Validate setup: ${GREEN}./validate-setup.sh${NC}"
+    echo
+    echo -e "${CYAN}Available Commands:${NC}"
+    echo "  • ${GREEN}/think${NC} - Structured reasoning for complex decisions"
+    echo "  • ${GREEN}/efficient${NC} - Token-optimized responses for long sessions"  
+    echo "  • ${GREEN}/pm${NC} - Project Manager persona"
+    echo "  • ${GREEN}/architect${NC} - System Architect persona"
+    echo "  • ${GREEN}/frontend${NC} - Frontend Developer persona"
+    echo "  • ${GREEN}/backend${NC} - Backend Developer persona"
+    echo "  • ${GREEN}/qa${NC} - QA Engineer persona"
+    echo "  • ${GREEN}/devops${NC} - DevOps Engineer persona"
+    echo "  • ${GREEN}/security${NC} - Security Engineer persona"
+    echo "  • ${GREEN}/cloud${NC} - Cloud Engineer persona"
     echo
     echo -e "${CYAN}Important:${NC}"
     echo "  • Always run Claude from the framework root"
