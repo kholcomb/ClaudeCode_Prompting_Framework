@@ -11,14 +11,14 @@ The framework consists of several major components that may be versioned indepen
 
 | Component | Current Version | Description |
 |-----------|----------------|-------------|
-| Framework | 1.2.2 | Overall framework version |
+| Framework | 1.2.3 | Overall framework version |
 | CLAUDE.md | 1.2.2 | Core framework instructions |
 | Session State Schema | 1.2.0 | JSON structure for state management |
-| Command Set | 1.1.0 | Available slash commands |
+| Command Set | 1.2.0 | Available slash commands |
 | Contract Protocol | 1.0.0 | Inter-persona communication format |
 | Persona Definitions | 1.2.0 | Persona workflows and responsibilities |
 | Task Management | 1.2.0 | Task queue and coordination system |
-| Directory Structure | 1.2.2 | Framework file organization |
+| Directory Structure | 1.2.3 | Framework file organization |
 
 ## [Unreleased]
 
@@ -28,6 +28,32 @@ The framework consists of several major components that may be versioned indepen
 - Enhanced merge conflict resolution
 - Advanced task dependency visualization
 - Cross-persona workload balancing
+
+## [1.2.3] - 2024-06-23
+
+### Component Versions
+- Framework: 1.2.2 → 1.2.3
+- Directory Structure: 1.2.2 → 1.2.3
+- Command Set: 1.1.0 → 1.2.0
+
+### Added
+- **Claude Code Command Templates**: Complete `.claude/commands/` directory structure
+  - `/think` command for structured reasoning and complex decision analysis
+  - `/efficient` command for token-optimized responses in long sessions
+  - Persona-specific commands: `/pm`, `/architect`, `/frontend`, `/backend`, `/qa`, `/devops`, `/security`, `/cloud`
+  - Comprehensive command documentation with usage examples and workflows
+
+### Enhanced
+- **Setup Script Improvements**: Enhanced `setup-framework.sh` with Claude Code integration
+  - Automatic creation of `.claude/commands/` directory during setup
+  - Generation of all command template files with detailed documentation
+  - Added `.claude` directory to validation checks
+  - Updated completion message to display available commands
+
+### Fixed
+- **Local Settings Protection**: Added `settings.local.json` to .gitignore
+  - Prevents accidental commit of local Claude Code settings
+  - Ensures user privacy and configuration isolation
 
 ## [1.2.2] - 2024-06-23
 
