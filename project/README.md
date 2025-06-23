@@ -33,19 +33,26 @@ project/
 - [Dependencies and system requirements]
 
 ### Installation
-1. Initialize git repository: `git init`
+1. **Initialize git repository** (IMPORTANT - only in this project/ directory):
+   ```bash
+   git init
+   git add .
+   git commit -m "Initial project setup"
+   ```
 2. Install dependencies: `[package manager install command]`
 3. Configure environment: `[environment setup]`
 4. Run development server: `[start command]`
 
 ### Development Workflow
 
-This project uses the multi-agent development framework located in the parent directory. The framework provides:
+This project uses the multi-persona development framework located in the parent directory. The framework provides:
 
-- **Role-based development**: Specialized team roles for different aspects of development
-- **Custom commands**: Use `/project:help` to see available commands
+- **Persona-based development**: Specialized team personas for different aspects of development
+- **Git isolation**: This project's git repository is separate from the framework template
 - **Quality assurance**: Built-in quality gates and review processes
 - **Documentation sync**: Automatic synchronization between code and documentation
+
+**Important**: All git operations should be performed from this project/ directory, not the framework root.
 
 ### Available Commands
 

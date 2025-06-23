@@ -1,54 +1,17 @@
 # Dependabot configuration for automated dependency updates
 # https://docs.github.com/github/administering-a-repository/configuration-options-for-dependency-updates
+#
+# This template framework doesn't have dependencies itself, but provides 
+# configuration for projects that will use the framework.
+# 
+# When you create a project from this template:
+# 1. Update the reviewers field with your GitHub username
+# 2. Remove ecosystems you don't use in your project
+# 3. Add/remove directories as needed for your project structure
 
 version: 2
 updates:
-  # Enable version updates for npm
-  - package-ecosystem: "npm"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "04:00"
-    pull-request-branch-name:
-      separator: "/"
-    labels:
-      - "dependencies"
-      - "npm"
-    reviewers:
-      - "your-github-username"  # Update this
-    open-pull-requests-limit: 10
-    # Group patch and minor updates together
-    groups:
-      npm-development:
-        patterns:
-          - "*"
-        dependency-type: "development"
-        update-types:
-          - "minor"
-          - "patch"
-      npm-production:
-        patterns:
-          - "*"
-        dependency-type: "production"
-        update-types:
-          - "patch"
-
-  # Enable version updates for pip
-  - package-ecosystem: "pip"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "04:00"
-    labels:
-      - "dependencies"
-      - "python"
-    reviewers:
-      - "your-github-username"  # Update this
-    open-pull-requests-limit: 10
-
-  # Enable version updates for GitHub Actions
+  # GitHub Actions (for CI/CD workflows)
   - package-ecosystem: "github-actions"
     directory: "/"
     schedule:
@@ -59,21 +22,54 @@ updates:
       - "dependencies"
       - "github-actions"
     reviewers:
-      - "your-github-username"  # Update this
+      - "kholcomb"  # Replace with your GitHub username
+    open-pull-requests-limit: 5
 
-  # Enable version updates for Docker
-  - package-ecosystem: "docker"
-    directory: "/"
-    schedule:
-      interval: "weekly"
-      day: "monday"
-      time: "04:00"
-    labels:
-      - "dependencies"
-      - "docker"
-    reviewers:
-      - "your-github-username"  # Update this
+  # Example configurations for common project types
+  # Uncomment and modify based on your project needs:
+
+  # For Node.js projects (project/ directory)
+  # - package-ecosystem: "npm"
+  #   directory: "/project"
+  #   schedule:
+  #     interval: "weekly"
+  #     day: "monday"
+  #     time: "04:00"
+  #   labels:
+  #     - "dependencies"
+  #     - "npm"
+  #   reviewers:
+  #     - "kholcomb"
+  #   open-pull-requests-limit: 10
+  #   groups:
+  #     npm-development:
+  #       patterns:
+  #         - "*"
+  #       dependency-type: "development"
+  #       update-types:
+  #         - "minor"
+  #         - "patch"
+
+  # For Python projects (project/ directory)
+  # - package-ecosystem: "pip"
+  #   directory: "/project"
+  #   schedule:
+  #     interval: "weekly"
+  #   labels:
+  #     - "dependencies"
+  #     - "python"
+  #   reviewers:
+  #     - "kholcomb"
+
+  # For Docker projects (project/ directory)
+  # - package-ecosystem: "docker"
+  #   directory: "/project"
+  #   schedule:
+  #     interval: "weekly"
+  #   labels:
+  #     - "dependencies"
+  #     - "docker"
+  #   reviewers:
+  #     - "kholcomb"
 
 # Security updates are always given the highest priority
-# Dependabot will automatically create PRs for security updates
-# regardless of the schedule defined above
