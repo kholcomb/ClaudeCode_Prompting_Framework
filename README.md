@@ -84,6 +84,14 @@ This framework is a **prompt engineering template** designed to enhance how Clau
 multi_agent_prompting_framework_template/
 ├── README.md                    # This file
 ├── CLAUDE.md                    # Framework configuration and instructions
+├── CHANGELOG.md                 # Version history and changes
+├── VERSION                      # Current framework version
+├── LICENSE                      # MIT License
+├── SECURITY.md                  # Security policy
+├── .github/                     # GitHub configurations
+│   └── dependabot.yml          # Automated dependency updates
+├── .claude/                     # Claude Code command templates
+│   └── commands/               # Custom command definitions
 ├── artifacts/                   # Generated artifacts and contracts
 │   ├── contracts/              # Interface contracts between components
 │   │   ├── api/               # API contracts
@@ -332,12 +340,40 @@ The framework maintains persistent state in `logs/session-state.json`:
   "contracts": {
     "active": ["api-v1.0.0", "data-models-v1.0.0"]
   },
+  "context_management": {
+    "mode": "efficient",
+    "context_usage_estimate": "high",
+    "compression_active": true
+  },
+  "subagent_coordination": {
+    "active_subagents": [
+      {
+        "role": "frontend_developer",
+        "task_id": "dashboard-ui",
+        "working_files": ["src/Dashboard.jsx"]
+      }
+    ],
+    "message_queue": [],
+    "handoff_points": {"pending": [], "completed": []}
+  },
+  "git_context": {
+    "branch": "feature/dashboard",
+    "modified_files": ["src/Dashboard.jsx", "tests/dashboard.test.js"],
+    "last_commit": "abc123"
+  },
   "progress": {
     "overall_completion": 35,
     "current_milestone": "MVP Development"
   }
 }
 ```
+
+### Enhanced Features (v1.1.0)
+
+- **Context Management**: Intelligent optimization for long sessions
+- **Subagent Coordination**: Parallel execution with message queues
+- **Git Context**: Minimal tracking for multi-branch development
+- **Multi-Branch Support**: Subagents can work on different branches simultaneously
 
 ### Contract Management
 
@@ -680,9 +716,54 @@ Activates explicit reasoning mode for complex decisions:
 ### Efficient Command (`/efficient`)
 Enables token-efficient responses:
 - Compressed output for long sessions
-- Code-focused responses
+- Code-focused responses  
 - Automatic context optimization
 - Preserves critical information
+
+### Example Usage
+
+**Multi-Branch Development:**
+```
+Human: Let's work on two features in parallel - frontend team on the new dashboard UI, backend team on API v2
+
+Claude (as PM): I'll coordinate parallel development:
+- Spawning Frontend subagent on feature/dashboard-ui branch
+- Spawning Backend subagent on feature/api-v2 branch
+- Both can work simultaneously without conflicts
+
+[Spawns subagents using Task tool]
+
+Frontend Subagent: Working on Dashboard.jsx in feature/dashboard-ui
+Backend Subagent: Implementing API endpoints in feature/api-v2
+```
+
+**Using Think Mode:**
+```
+Human: We need to decide between GraphQL and REST for our API
+
+Claude: Let me engage think mode for this architectural decision...
+
+## Decision: API Architecture Choice
+### Problem Statement
+Choose between GraphQL and REST for a multi-client application...
+
+[Structured analysis of both options with pros/cons]
+
+### Decision
+REST with OpenAPI specification, rationale: [detailed reasoning]
+```
+
+**Efficient Mode for Long Sessions:**
+```  
+Human: Switch to efficient mode - we have a lot of components to implement
+
+Claude: ✓ Efficient mode active
+- Concise responses
+- Code-focused output
+- Context optimized
+
+Ready for rapid development.
+```
 
 ## Contributing
 
