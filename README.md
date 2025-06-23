@@ -329,12 +329,21 @@ The framework maintains persistent state in `logs/session-state.json`:
     "project_name": "My Project",
     "current_phase": "development"
   },
-  "roles": {
+  "personas": {
     "project_manager": {
       "status": "active",
       "current_workflow_stage": "track",
-      "active_tasks": ["Task 1", "Task 2"],
-      "completed_tasks": ["Task 0"]
+      "task_queue": {
+        "active_tasks": ["Task 1", "Task 2"],
+        "queued_tasks": ["Task 3"],
+        "completed_tasks": ["Task 0"],
+        "blocked_tasks": []
+      },
+      "task_management": {
+        "task_priorities": ["high", "medium", "low"],
+        "current_focus": "Task 1",
+        "task_dependencies": {"Task 2": ["Contract API-v1.0"]}
+      }
     }
   },
   "contracts": {
@@ -345,16 +354,22 @@ The framework maintains persistent state in `logs/session-state.json`:
     "context_usage_estimate": "high",
     "compression_active": true
   },
-  "subagent_coordination": {
-    "active_subagents": [
+  "persona_coordination": {
+    "active_personas": [
       {
-        "role": "frontend_developer",
+        "persona": "frontend_developer",
         "task_id": "dashboard-ui",
-        "working_files": ["src/Dashboard.jsx"]
+        "working_files": ["src/Dashboard.jsx"],
+        "task_focus": "Component implementation"
       }
     ],
     "message_queue": [],
-    "handoff_points": {"pending": [], "completed": []}
+    "handoff_points": {"pending": [], "completed": []},
+    "task_coordination": {
+      "cross_persona_dependencies": {},
+      "shared_task_artifacts": [],
+      "coordination_points": []
+    }
   },
   "git_context": {
     "branch": "feature/dashboard",
@@ -368,12 +383,14 @@ The framework maintains persistent state in `logs/session-state.json`:
 }
 ```
 
-### Enhanced Features (v1.1.0)
+### Enhanced Features (v1.2.0)
 
 - **Context Management**: Intelligent optimization for long sessions
-- **Subagent Coordination**: Parallel execution with message queues
+- **Persona Coordination**: Parallel execution with message queues and task management
+- **Task Management**: Comprehensive task queues with priority and dependency tracking
 - **Git Context**: Minimal tracking for multi-branch development
-- **Multi-Branch Support**: Subagents can work on different branches simultaneously
+- **Multi-Branch Support**: Personas can work on different branches simultaneously
+- **Cross-Persona Dependencies**: Structured task handoffs and coordination protocols
 
 ### Contract Management
 
@@ -727,14 +744,16 @@ Enables token-efficient responses:
 Human: Let's work on two features in parallel - frontend team on the new dashboard UI, backend team on API v2
 
 Claude (as PM): I'll coordinate parallel development:
-- Spawning Frontend subagent on feature/dashboard-ui branch
-- Spawning Backend subagent on feature/api-v2 branch
+- Activating Frontend persona on feature/dashboard-ui branch
+- Activating Backend persona on feature/api-v2 branch
 - Both can work simultaneously without conflicts
 
-[Spawns subagents using Task tool]
+[Activates personas using Task tool]
 
-Frontend Subagent: Working on Dashboard.jsx in feature/dashboard-ui
-Backend Subagent: Implementing API endpoints in feature/api-v2
+Frontend Persona: Working on Dashboard.jsx in feature/dashboard-ui
+- Task Queue: Active [Dashboard component], Queued [Navigation updates]
+Backend Persona: Implementing API endpoints in feature/api-v2  
+- Task Queue: Active [User endpoints], Queued [Auth middleware]
 ```
 
 **Using Think Mode:**
