@@ -6,7 +6,7 @@ set -e
 
 # Test configuration
 TEST_DIR=$(mktemp -d)
-REPO_URL="https://raw.githubusercontent.com/kholcomb/ClaudeCode_Prompting_Framework/refs/heads/feature/remote-setup-capability"
+REPO_URL="https://raw.githubusercontent.com/kholcomb/ClaudeCode_Prompting_Framework/refs/heads/main"
 SCRIPT_URL="$REPO_URL/setup-framework.sh"
 
 # Colors for output
