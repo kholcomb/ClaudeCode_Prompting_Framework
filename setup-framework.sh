@@ -116,7 +116,7 @@ init_session_state() {
     "session_info": {
         "session_id": "$(uuidgen 2>/dev/null || date +%s)",
         $project_info
-        "created_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ)",
+        "created_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || date +%Y-%m-%dT%H:%M:%SZ)",
         "framework_version": "$FRAMEWORK_VERSION",
         "current_phase": "initialization"
     },
@@ -197,7 +197,7 @@ fi
 echo '{
     "session_info": {
         "session_id": "'$(uuidgen 2>/dev/null || date +%s)'",
-        "created_at": "'$(date -u +%Y-%m-%dT%H:%M:%SZ)'",
+        "created_at": "'$(date -u +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || date +%Y-%m-%dT%H:%M:%SZ)'",
         "framework_version": "'$(cat VERSION 2>/dev/null || echo "1.3.0")'",
         "current_phase": "initialization"
     },
@@ -316,6 +316,7 @@ custom_setup() {
     echo
     
     # Optional: Project name
+    print_info "Note: Project name will be saved to logs/session-state.json (excluded from git by default)"
     read -p "$(echo -e ${CYAN}Project name (optional, press Enter to skip): ${NC})" PROJECT_NAME
     
     # Optional: Select personas
@@ -367,7 +368,7 @@ custom_setup() {
     # Optional: VS Code setup
     echo
     read -p "$(echo -e ${CYAN}Configure VS Code workspace? [Y/n]: ${NC})" vscode_setup
-    if [[ "${vscode_setup,,}" != "n" ]]; then
+    if [[ "$(echo "$vscode_setup" | tr '[:upper:]' '[:lower:]')" != "n" ]]; then
         setup_vscode
         print_success "VS Code configured"
     fi
@@ -375,7 +376,7 @@ custom_setup() {
     # Optional: Git setup
     echo
     read -p "$(echo -e ${CYAN}Initialize git in project/ directory? [y/N]: ${NC})" git_setup
-    if [[ "${git_setup,,}" == "y" ]]; then
+    if [[ "$(echo "$git_setup" | tr '[:upper:]' '[:lower:]')" == "y" ]]; then
         cd project/
         git init
         echo "# Project" > README.md
@@ -431,7 +432,7 @@ main() {
     if [[ -f logs/session-state.json ]] && [[ -d artifacts/contracts ]]; then
         print_warning "Framework appears to be already set up"
         read -p "$(echo -e ${CYAN}Continue anyway? [y/N]: ${NC})" continue_setup
-        if [[ "${continue_setup,,}" != "y" ]]; then
+        if [[ "$(echo "$continue_setup" | tr '[:upper:]' '[:lower:]')" != "y" ]]; then
             print_info "Setup cancelled"
             exit 0
         fi
@@ -446,7 +447,7 @@ main() {
     echo
     read -p "$(echo -e ${CYAN}Select setup mode [Q/c/e]: ${NC})" setup_mode
     
-    case "${setup_mode,,}" in
+    case "$(echo "$setup_mode" | tr '[:upper:]' '[:lower:]')" in
         c|custom)
             custom_setup
             ;;

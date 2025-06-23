@@ -1,7 +1,9 @@
 # Claude Code settings
 .claude/settings.local.json
 
-# Session and temporary files
+# Session and temporary files - PRIVACY: Archive and checkpoints may contain user data
+logs/archive/
+logs/checkpoints/
 logs/*.log
 
 # OS files
@@ -13,8 +15,8 @@ logs/*.log
 ehthumbs.db
 Thumbs.db
 
-# IDE files
-.vscode/
+# IDE files - Keep .vscode/extensions.json but ignore user-specific settings
+.vscode/settings.json
 .idea/
 *.sublime-project
 *.sublime-workspace
