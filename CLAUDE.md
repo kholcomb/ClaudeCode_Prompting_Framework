@@ -1,5 +1,5 @@
 # Multi-Persona Development Team Framework
-<!-- Version: 1.2.0 -->
+<!-- Version: 1.2.1 -->
 
 This directory contains a multi-persona development team framework where Claude Code operates as different specialized personas with distinct workflows and task management capabilities.
 
@@ -362,7 +362,8 @@ When resuming work with multiple branches:
 - Framework operates in parent directory with project code in project/ subdirectory
 - Specifications maintained in specs/ with automatic synchronization to project documentation
 - Artifact generation supports both framework planning and project deliverables
-- Git integration excludes framework files while including project development
+- Git repository should be initialized only within project/ directory for version control isolation
+- Framework files remain outside of project's git history to maintain clean project repository
 
 ### **Documentation Synchronization**
 - Technical documentation automatically updated with code changes

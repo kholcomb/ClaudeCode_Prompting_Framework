@@ -11,14 +11,14 @@ The framework consists of several major components that may be versioned indepen
 
 | Component | Current Version | Description |
 |-----------|----------------|-------------|
-| Framework | 1.2.0 | Overall framework version |
-| CLAUDE.md | 1.2.0 | Core framework instructions |
+| Framework | 1.2.1 | Overall framework version |
+| CLAUDE.md | 1.2.1 | Core framework instructions |
 | Session State Schema | 1.2.0 | JSON structure for state management |
 | Command Set | 1.1.0 | Available slash commands |
 | Contract Protocol | 1.0.0 | Inter-persona communication format |
 | Persona Definitions | 1.2.0 | Persona workflows and responsibilities |
 | Task Management | 1.2.0 | Task queue and coordination system |
-| Directory Structure | 1.0.0 | Framework file organization |
+| Directory Structure | 1.2.1 | Framework file organization |
 
 ## [Unreleased]
 
@@ -28,6 +28,23 @@ The framework consists of several major components that may be versioned indepen
 - Enhanced merge conflict resolution
 - Advanced task dependency visualization
 - Cross-persona workload balancing
+
+## [1.2.1] - 2024-06-23
+
+### Component Versions
+- Framework: 1.2.0 → 1.2.1
+- CLAUDE.md: 1.2.0 → 1.2.1
+- Directory Structure: 1.0.0 → 1.2.1
+
+### Changed
+- **Git Repository Structure**: Clarified that git repositories should be initialized only within project/ directory
+  - Updated documentation to specify version control isolation between framework and project
+  - Framework files remain outside of project's git history for clean project repositories
+  - Updated setup instructions in README.md for proper git initialization
+
+### Enhanced
+- **Project Integration Documentation**: Improved clarity on directory structure and version control separation
+- **Setup Guide**: Enhanced initial setup instructions with proper git repository structure
 
 ## [1.2.0] - 2024-01-24
 

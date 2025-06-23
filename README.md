@@ -196,9 +196,22 @@ The framework uses a contract-based communication system:
    git commit -m "Initial commit from multi-agent framework template"
    ```
 
-2. **Configure Your Project**:
+2. **Set Up Git Repository Structure**:
    ```bash
-   # Update project specifications
+   # IMPORTANT: Initialize git repository only within the project directory
+   cd project/
+   git init                       # Initialize git for your actual project
+   git add .
+   git commit -m "Initial project setup"
+   
+   # All future git operations should be performed from project/ directory
+   # This ensures version control is isolated to your project code
+   # The framework files remain outside of your project's git history
+   ```
+
+3. **Configure Your Project**:
+   ```bash
+   # Update project specifications (from framework root)
    # Edit these files to match your project:
    - specs/requirements.md        # Your project requirements
    - specs/project-plan.md        # Timeline and milestones
@@ -206,7 +219,7 @@ The framework uses a contract-based communication system:
    - project/README.md            # Your project's README
    ```
 
-3. **Start Claude Code**:
+4. **Start Claude Code**:
    ```bash
    # From the framework root directory (not project/)
    claude                         # Or your Claude Code command
@@ -541,7 +554,8 @@ The template includes GitHub configurations:
 
 2. **Setting Up Your Repository**:
    ```bash
-   # After creating your GitHub repo
+   # After creating your GitHub repo (from within project/ directory)
+   cd project/
    git remote add origin https://github.com/yourusername/your-project.git
    git branch -M main
    git push -u origin main
@@ -687,6 +701,11 @@ To change how a role operates:
 - Simplify workflows to match your needs
 - Focus on 2-3 key roles initially
 
+**"Git repository setup is confusing"**
+- Ensure git is initialized only in project/ directory
+- Framework files should not be in your project's git history
+- Use separate repositories: framework template vs. your actual project
+
 ### Quick Fixes
 
 ```bash
@@ -697,6 +716,13 @@ cp logs/session-state.json logs/session-state.backup.json
 # Start fresh
 rm logs/session-state.json
 git checkout logs/session-state.json
+
+# Git repository issues (if git was initialized incorrectly)
+# Move to correct location and reinitialize:
+cd project/
+git init
+git add .
+git commit -m "Initialize project repository"
 
 # Debug role behavior
 # Ask Claude: "What is your current role and what workflow stage are you in?"
