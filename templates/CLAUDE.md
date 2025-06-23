@@ -31,6 +31,8 @@ Reusable code patterns and scaffolds:
 ### Project Management Templates
 Project planning and tracking templates:
 - Task breakdown templates
+- Task coordination templates
+- Persona coordination templates
 - Status report templates
 - Risk assessment templates
 - Meeting agenda templates
@@ -50,7 +52,7 @@ Project planning and tracking templates:
 Templates use placeholder variables:
 - `[PROJECT_NAME]` - Project name
 - `[COMPONENT_NAME]` - Component/feature name
-- `[ROLE_NAME]` - Responsible role
+- `[PERSONA_NAME]` - Responsible persona
 - `[DATE]` - Current date
 - `[VERSION]` - Version number
 
@@ -86,6 +88,8 @@ Templates use placeholder variables:
 
 ### Project Templates
 - **Task Breakdown**: Work breakdown structure
+- **Task Template**: Structured task definition and management
+- **Persona Coordination**: Cross-persona collaboration framework
 - **Status Report**: Regular status update format
 - **Risk Assessment**: Risk analysis template
 - **Meeting Agenda**: Standard meeting format
@@ -95,7 +99,7 @@ Templates use placeholder variables:
 
 ### Version Control
 - All templates are version controlled
-- Changes reviewed by relevant roles
+- Changes reviewed by relevant personas
 - Deprecation process for outdated templates
 - Migration guides for template updates
 
