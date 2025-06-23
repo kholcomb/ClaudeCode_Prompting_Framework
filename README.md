@@ -1,31 +1,30 @@
-# Multi-Agent Development Team Framework
+# Multi-Persona Development Team Framework
 
-A prompt engineering template that enables Claude Code to assist with software development through specialized team roles, providing structured workflows and organized project management.
+A prompt engineering template that enables Claude Code to assist with software development through specialized personas, providing structured workflows and organized task management.
 
 ## Table of Contents
 
 - [Overview](#overview)
 - [Key Features](#key-features)
-- [Architecture & Design](#architecture--design)
+- [Framework Structure](#framework-structure)
 - [Getting Started](#getting-started)
 - [Setup Guide](#setup-guide)
 - [Customization](#customization)
-- [Team Roles & Workflows](#team-roles--workflows)
+- [Team Personas & Task Workflows](#team-personas--task-workflows)
 - [Framework Components](#framework-components)
 - [Usage Examples](#usage-examples)
 - [Best Practices](#best-practices)
-- [Advanced Features](#advanced-features)
 - [New Commands](#new-commands)
 - [Troubleshooting](#troubleshooting)
 
 ## Overview
 
-This framework is a **prompt engineering template** designed to enhance how Claude Code assists with software development projects. By providing structured instructions in CLAUDE.md, it enables Claude to operate with role-based expertise, similar to working with a specialized development team.
+This framework is a **prompt engineering template** designed to enhance how Claude Code assists with software development projects. By providing structured instructions in CLAUDE.md, it enables Claude to operate with persona-based expertise, similar to working with a specialized development team.
 
 ### What This Framework Is
 
 - **A directory structure template** with organized folders for specifications, artifacts, and project code
-- **A comprehensive CLAUDE.md file** that instructs Claude Code on role-based development workflows
+- **A comprehensive CLAUDE.md file** that instructs Claude Code on persona-based development workflows
 - **A session management approach** for maintaining context across Claude Code interactions
 - **A methodology** for organizing complex development projects with AI assistance
 
@@ -38,37 +37,37 @@ This framework is a **prompt engineering template** designed to enhance how Clau
 
 ### Why Use This Framework?
 
-- **Specialized Responses**: Claude adopts specific expertise based on the active role
-- **Structured Workflows**: Each role follows defined processes for consistency
+- **Specialized Responses**: Claude adopts specific expertise based on the active persona
+- **Structured Workflows**: Each persona follows defined processes for consistency
 - **Organized Development**: Clear separation of concerns across different aspects
 - **Context Persistence**: Session state helps maintain continuity across interactions
 - **Better Documentation**: Structured approach to maintaining project documentation
 
 ## Key Features
 
-### Autonomous Subagent Architecture
-- Each role operates as an independent subagent capable of parallel execution
+### Autonomous Persona Architecture
+- Each persona operates as an independent agent capable of parallel execution
 - True concurrent development through the Task tool
 - Multi-branch development support for isolated feature work
 - Asynchronous coordination through message queues and contracts
 
-### Role-Based Development
-- 8 specialized roles covering all aspects of modern software development
-- Each role follows specific workflows optimized for their responsibilities
+### Persona-Based Development
+- 8 specialized personas covering all aspects of modern software development
+- Each persona follows specific workflows optimized for their responsibilities
 - Enhanced exploration phases with mandatory codebase analysis
-- Clear handoffs and contract-based communication between roles
+- Clear handoffs and contract-based communication between personas
 
 ### Intelligent Context Management
 - Efficient mode for token optimization during long sessions
 - Smart context pruning strategies
 - Git-aware session state tracking
-- Branch-specific context preservation per subagent
+- Branch-specific context preservation per persona
 
 ### Quality Focus
-- Quality checkpoints defined in each role's workflow
+- Quality checkpoints defined in each persona's workflow
 - Testing strategies incorporated into development process
-- Code review considerations built into role behaviors
-- Security and performance awareness in relevant roles
+- Code review considerations built into persona behaviors
+- Security and performance awareness in relevant personas
 
 ### Documentation Structure
 - Organized specifications in dedicated directories
@@ -118,9 +117,12 @@ multi_agent_prompting_framework_template/
 │   ├── apis/                 # API specifications
 │   └── design/               # Design documents
 └── templates/                 # Reusable document templates
+    ├── CLAUDE.md
     ├── api-contract-template.md
     ├── feature-spec-template.md
-    └── status-report-template.md
+    ├── persona-coordination-template.md
+    ├── status-report-template.md
+    └── task-template.md
 ```
 
 ### Workflow Architecture
@@ -194,9 +196,22 @@ The framework uses a contract-based communication system:
    git commit -m "Initial commit from multi-agent framework template"
    ```
 
-2. **Configure Your Project**:
+2. **Set Up Git Repository Structure**:
    ```bash
-   # Update project specifications
+   # IMPORTANT: Initialize git repository only within the project directory
+   cd project/
+   git init                       # Initialize git for your actual project
+   git add .
+   git commit -m "Initial project setup"
+   
+   # All future git operations should be performed from project/ directory
+   # This ensures version control is isolated to your project code
+   # The framework files remain outside of your project's git history
+   ```
+
+3. **Configure Your Project**:
+   ```bash
+   # Update project specifications (from framework root)
    # Edit these files to match your project:
    - specs/requirements.md        # Your project requirements
    - specs/project-plan.md        # Timeline and milestones
@@ -204,7 +219,7 @@ The framework uses a contract-based communication system:
    - project/README.md            # Your project's README
    ```
 
-3. **Start Claude Code**:
+4. **Start Claude Code**:
    ```bash
    # From the framework root directory (not project/)
    claude                         # Or your Claude Code command
@@ -234,7 +249,7 @@ The framework uses a contract-based communication system:
    Human: What's our current project status? What tasks are in progress?
    ```
 
-## Team Roles & Workflows
+## Team Personas & Task Workflows
 
 ### Project Manager
 **Workflow**: `coordinate → plan → track → communicate`
@@ -329,12 +344,21 @@ The framework maintains persistent state in `logs/session-state.json`:
     "project_name": "My Project",
     "current_phase": "development"
   },
-  "roles": {
+  "personas": {
     "project_manager": {
       "status": "active",
       "current_workflow_stage": "track",
-      "active_tasks": ["Task 1", "Task 2"],
-      "completed_tasks": ["Task 0"]
+      "task_queue": {
+        "active_tasks": ["Task 1", "Task 2"],
+        "queued_tasks": ["Task 3"],
+        "completed_tasks": ["Task 0"],
+        "blocked_tasks": []
+      },
+      "task_management": {
+        "task_priorities": ["high", "medium", "low"],
+        "current_focus": "Task 1",
+        "task_dependencies": {"Task 2": ["Contract API-v1.0"]}
+      }
     }
   },
   "contracts": {
@@ -345,16 +369,22 @@ The framework maintains persistent state in `logs/session-state.json`:
     "context_usage_estimate": "high",
     "compression_active": true
   },
-  "subagent_coordination": {
-    "active_subagents": [
+  "persona_coordination": {
+    "active_personas": [
       {
-        "role": "frontend_developer",
+        "persona": "frontend_developer",
         "task_id": "dashboard-ui",
-        "working_files": ["src/Dashboard.jsx"]
+        "working_files": ["src/Dashboard.jsx"],
+        "task_focus": "Component implementation"
       }
     ],
     "message_queue": [],
-    "handoff_points": {"pending": [], "completed": []}
+    "handoff_points": {"pending": [], "completed": []},
+    "task_coordination": {
+      "cross_persona_dependencies": {},
+      "shared_task_artifacts": [],
+      "coordination_points": []
+    }
   },
   "git_context": {
     "branch": "feature/dashboard",
@@ -368,12 +398,14 @@ The framework maintains persistent state in `logs/session-state.json`:
 }
 ```
 
-### Enhanced Features (v1.1.0)
+### Enhanced Features (v1.2.0)
 
 - **Context Management**: Intelligent optimization for long sessions
-- **Subagent Coordination**: Parallel execution with message queues
+- **Persona Coordination**: Parallel execution with message queues and task management
+- **Task Management**: Comprehensive task queues with priority and dependency tracking
 - **Git Context**: Minimal tracking for multi-branch development
-- **Multi-Branch Support**: Subagents can work on different branches simultaneously
+- **Multi-Branch Support**: Personas can work on different branches simultaneously
+- **Cross-Persona Dependencies**: Structured task handoffs and coordination protocols
 
 ### Contract Management
 
@@ -522,7 +554,8 @@ The template includes GitHub configurations:
 
 2. **Setting Up Your Repository**:
    ```bash
-   # After creating your GitHub repo
+   # After creating your GitHub repo (from within project/ directory)
+   cd project/
    git remote add origin https://github.com/yourusername/your-project.git
    git branch -M main
    git push -u origin main
@@ -668,6 +701,11 @@ To change how a role operates:
 - Simplify workflows to match your needs
 - Focus on 2-3 key roles initially
 
+**"Git repository setup is confusing"**
+- Ensure git is initialized only in project/ directory
+- Framework files should not be in your project's git history
+- Use separate repositories: framework template vs. your actual project
+
 ### Quick Fixes
 
 ```bash
@@ -678,6 +716,13 @@ cp logs/session-state.json logs/session-state.backup.json
 # Start fresh
 rm logs/session-state.json
 git checkout logs/session-state.json
+
+# Git repository issues (if git was initialized incorrectly)
+# Move to correct location and reinitialize:
+cd project/
+git init
+git add .
+git commit -m "Initialize project repository"
 
 # Debug role behavior
 # Ask Claude: "What is your current role and what workflow stage are you in?"
@@ -702,8 +747,6 @@ git checkout logs/session-state.json
 
 ---
 
-## Contributing
-
 ## New Commands
 
 ### Think Command (`/think`)
@@ -727,14 +770,16 @@ Enables token-efficient responses:
 Human: Let's work on two features in parallel - frontend team on the new dashboard UI, backend team on API v2
 
 Claude (as PM): I'll coordinate parallel development:
-- Spawning Frontend subagent on feature/dashboard-ui branch
-- Spawning Backend subagent on feature/api-v2 branch
+- Activating Frontend persona on feature/dashboard-ui branch
+- Activating Backend persona on feature/api-v2 branch
 - Both can work simultaneously without conflicts
 
-[Spawns subagents using Task tool]
+[Activates personas using Task tool]
 
-Frontend Subagent: Working on Dashboard.jsx in feature/dashboard-ui
-Backend Subagent: Implementing API endpoints in feature/api-v2
+Frontend Persona: Working on Dashboard.jsx in feature/dashboard-ui
+- Task Queue: Active [Dashboard component], Queued [Navigation updates]
+Backend Persona: Implementing API endpoints in feature/api-v2  
+- Task Queue: Active [User endpoints], Queued [Auth middleware]
 ```
 
 **Using Think Mode:**
@@ -743,14 +788,12 @@ Human: We need to decide between GraphQL and REST for our API
 
 Claude: Let me engage think mode for this architectural decision...
 
-## Decision: API Architecture Choice
-### Problem Statement
-Choose between GraphQL and REST for a multi-client application...
+**Decision: API Architecture Choice**
+Problem Statement: Choose between GraphQL and REST for a multi-client application...
 
 [Structured analysis of both options with pros/cons]
 
-### Decision
-REST with OpenAPI specification, rationale: [detailed reasoning]
+Decision: REST with OpenAPI specification, rationale: [detailed reasoning]
 ```
 
 **Efficient Mode for Long Sessions:**
