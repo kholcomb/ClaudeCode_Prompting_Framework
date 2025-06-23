@@ -1,5 +1,5 @@
 # Multi-Persona Development Team Framework
-<!-- Version: 1.2.1 -->
+<!-- Version: 1.2.2 -->
 
 This directory contains a multi-persona development team framework where Claude Code operates as different specialized personas with distinct workflows and task management capabilities.
 
