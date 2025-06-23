@@ -6,7 +6,7 @@ A prompt engineering template that enables Claude Code to assist with software d
 
 - [Overview](#overview)
 - [Key Features](#key-features)
-- [Architecture & Design](#architecture--design)
+- [Framework Structure](#framework-structure)
 - [Getting Started](#getting-started)
 - [Setup Guide](#setup-guide)
 - [Customization](#customization)
@@ -14,7 +14,6 @@ A prompt engineering template that enables Claude Code to assist with software d
 - [Framework Components](#framework-components)
 - [Usage Examples](#usage-examples)
 - [Best Practices](#best-practices)
-- [Advanced Features](#advanced-features)
 - [New Commands](#new-commands)
 - [Troubleshooting](#troubleshooting)
 
@@ -118,9 +117,12 @@ multi_agent_prompting_framework_template/
 │   ├── apis/                 # API specifications
 │   └── design/               # Design documents
 └── templates/                 # Reusable document templates
+    ├── CLAUDE.md
     ├── api-contract-template.md
     ├── feature-spec-template.md
-    └── status-report-template.md
+    ├── persona-coordination-template.md
+    ├── status-report-template.md
+    └── task-template.md
 ```
 
 ### Workflow Architecture
@@ -719,8 +721,6 @@ git checkout logs/session-state.json
 
 ---
 
-## Contributing
-
 ## New Commands
 
 ### Think Command (`/think`)
@@ -762,14 +762,12 @@ Human: We need to decide between GraphQL and REST for our API
 
 Claude: Let me engage think mode for this architectural decision...
 
-## Decision: API Architecture Choice
-### Problem Statement
-Choose between GraphQL and REST for a multi-client application...
+**Decision: API Architecture Choice**
+Problem Statement: Choose between GraphQL and REST for a multi-client application...
 
 [Structured analysis of both options with pros/cons]
 
-### Decision
-REST with OpenAPI specification, rationale: [detailed reasoning]
+Decision: REST with OpenAPI specification, rationale: [detailed reasoning]
 ```
 
 **Efficient Mode for Long Sessions:**
