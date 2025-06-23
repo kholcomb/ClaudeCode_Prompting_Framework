@@ -1,0 +1,327 @@
+name: Framework CI/CD Pipeline
+
+on:
+  push:
+    branches: [ main, development ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  validate-framework:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Validate CLAUDE.md structure
+      run: |
+        if [ ! -f "CLAUDE.md" ]; then
+          echo "❌ CLAUDE.md not found"
+          exit 1
+        fi
+        
+        # Check for required sections
+        if ! grep -q "# Multi-Persona Development Team Framework" CLAUDE.md; then
+          echo "❌ Missing framework title"
+          exit 1
+        fi
+        
+        if ! grep -q "## Team Structure & Personas" CLAUDE.md; then
+          echo "❌ Missing personas section"
+          exit 1
+        fi
+        
+        echo "✅ CLAUDE.md structure valid"
+        
+    - name: Validate version consistency
+      run: |
+        FRAMEWORK_VERSION=$(cat VERSION)
+        CLAUDE_VERSION=$(grep -o 'Version: [0-9]\+\.[0-9]\+\.[0-9]\+' CLAUDE.md | cut -d' ' -f2)
+        
+        if [ "$FRAMEWORK_VERSION" != "$CLAUDE_VERSION" ]; then
+          echo "❌ Version mismatch: VERSION=$FRAMEWORK_VERSION, CLAUDE.md=$CLAUDE_VERSION"
+          exit 1
+        fi
+        
+        echo "✅ Version consistency valid"
+        
+    - name: Validate directory structure
+      run: |
+        REQUIRED_DIRS=(
+          "artifacts/contracts/api"
+          "artifacts/contracts/data" 
+          "artifacts/contracts/infrastructure"
+          "artifacts/contracts/security"
+          "artifacts/contracts/testing"
+          "artifacts/deliverables"
+          "logs/archive"
+          "logs/checkpoints"
+          "specs"
+          "templates"
+          "project"
+        )
+        
+        for dir in "${REQUIRED_DIRS[@]}"; do
+          if [ ! -d "$dir" ]; then
+            echo "❌ Missing required directory: $dir"
+            exit 1
+          fi
+        done
+        
+        echo "✅ Directory structure valid"
+        
+    - name: Validate templates
+      run: |
+        if [ ! -d "templates/project-types" ]; then
+          echo "❌ Missing project templates"
+          exit 1
+        fi
+        
+        TEMPLATE_COUNT=$(find templates/project-types -name "*.md" | wc -l)
+        if [ "$TEMPLATE_COUNT" -lt 3 ]; then
+          echo "❌ Insufficient project templates ($TEMPLATE_COUNT found, need at least 3)"
+          exit 1
+        fi
+        
+        echo "✅ Templates valid ($TEMPLATE_COUNT templates found)"
+
+  test-templates:
+    runs-on: ubuntu-latest
+    
+    strategy:
+      matrix:
+        template: [react, node, python]
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Test ${{ matrix.template }} template
+      run: |
+        # Check if template exists
+        TEMPLATE_FILE="templates/project-types/${{ matrix.template }}-*.md"
+        if ! ls $TEMPLATE_FILE 1> /dev/null 2>&1; then
+          echo "❌ Template not found: ${{ matrix.template }}"
+          exit 1
+        fi
+        
+        # Check if gitignore exists
+        GITIGNORE_FILE="templates/gitignore/${{ matrix.template }}.gitignore"
+        if [ ! -f "$GITIGNORE_FILE" ]; then
+          echo "❌ Gitignore not found: ${{ matrix.template }}"
+          exit 1
+        fi
+        
+        echo "✅ ${{ matrix.template }} template valid"
+
+  test-scripts:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Test setup script
+      run: |
+        if [ ! -f "setup-framework.sh" ]; then
+          echo "❌ setup-framework.sh not found"
+          exit 1
+        fi
+        
+        if [ ! -x "setup-framework.sh" ]; then
+          echo "❌ setup-framework.sh not executable"
+          exit 1
+        fi
+        
+        # Test script syntax
+        bash -n setup-framework.sh
+        echo "✅ setup-framework.sh syntax valid"
+        
+    - name: Test framework setup
+      run: |
+        # Run setup script
+        ./setup-framework.sh
+        
+        # Verify directories were created
+        if [ ! -d "project/src" ]; then
+          echo "❌ Project structure not created"
+          exit 1
+        fi
+        
+        if [ ! -f ".vscode/settings.json" ]; then
+          echo "❌ VS Code settings not created"
+          exit 1
+        fi
+        
+        echo "✅ Framework setup successful"
+
+  documentation-check:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Check markdown links
+      uses: gaurav-nelson/github-action-markdown-link-check@v1
+      with:
+        use-quiet-mode: 'yes'
+        use-verbose-mode: 'yes'
+        config-file: '.github/markdown-link-check-config.json'
+        
+    - name: Validate README structure
+      run: |
+        if ! grep -q "## Getting Started" README.md; then
+          echo "❌ Missing Getting Started section"
+          exit 1
+        fi
+        
+        if ! grep -q "## Usage Examples" README.md; then
+          echo "❌ Missing Usage Examples section"
+          exit 1
+        fi
+        
+        if ! grep -q "git init" README.md; then
+          echo "❌ Missing git initialization instructions"
+          exit 1
+        fi
+        
+        echo "✅ README structure valid"
+        
+    - name: Check for outdated content
+      run: |
+        # Check for old terminology
+        if grep -r "subagent" --exclude-dir=.git .; then
+          echo "⚠️  Found references to old 'subagent' terminology"
+        fi
+        
+        # Check for TODO items
+        if grep -r "TODO\|FIXME" --exclude-dir=.git .; then
+          echo "⚠️  Found TODO/FIXME items"
+        fi
+
+  security-scan:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Run secret scan
+      uses: trufflesecurity/trufflehog@main
+      with:
+        path: ./
+        base: main
+        head: HEAD
+        
+    - name: Check for sensitive files
+      run: |
+        # Check for files that shouldn't be committed
+        SENSITIVE_FILES=(
+          ".env"
+          "*.key"
+          "*.pem" 
+          "config/secrets.json"
+          "*.p12"
+          "*.pfx"
+        )
+        
+        for pattern in "${SENSITIVE_FILES[@]}"; do
+          if find . -name "$pattern" -not -path "./.git/*" | grep -q .; then
+            echo "❌ Found sensitive file: $pattern"
+            exit 1
+          fi
+        done
+        
+        echo "✅ No sensitive files found"
+
+  create-release:
+    runs-on: ubuntu-latest
+    needs: [validate-framework, test-templates, test-scripts, documentation-check]
+    if: github.ref == 'refs/heads/main' && github.event_name == 'push'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Get version
+      id: version
+      run: echo "version=$(cat VERSION)" >> $GITHUB_OUTPUT
+      
+    - name: Check if version tag exists
+      id: check_tag
+      run: |
+        if git rev-parse "v${{ steps.version.outputs.version }}" >/dev/null 2>&1; then
+          echo "exists=true" >> $GITHUB_OUTPUT
+        else
+          echo "exists=false" >> $GITHUB_OUTPUT
+        fi
+        
+    - name: Create release
+      if: steps.check_tag.outputs.exists == 'false'
+      uses: actions/create-release@v1
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v${{ steps.version.outputs.version }}
+        release_name: Framework v${{ steps.version.outputs.version }}
+        body: |
+          ## Multi-Persona Development Framework v${{ steps.version.outputs.version }}
+          
+          Automated release from main branch.
+          
+          ### What's New
+          - Check CHANGELOG.md for detailed changes
+          - Updated templates and documentation
+          - Enhanced framework capabilities
+          
+          ### Quick Start
+          ```bash
+          git clone https://github.com/${{ github.repository }}.git
+          cd ${{ github.event.repository.name }}
+          ./setup-framework.sh
+          ```
+          
+          🤖 Generated with Multi-Persona Development Framework
+        draft: false
+        prerelease: false
+
+  update-documentation:
+    runs-on: ubuntu-latest
+    needs: [validate-framework, test-templates]
+    if: github.ref == 'refs/heads/main'
+    
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+      
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20.x'
+        
+    - name: Generate template documentation
+      run: |
+        # Create a comprehensive template index
+        echo "# Available Project Templates" > templates/INDEX.md
+        echo "" >> templates/INDEX.md
+        
+        for template in templates/project-types/*.md; do
+          if [ -f "$template" ] && [ "$(basename "$template")" != "README.md" ]; then
+            TITLE=$(head -1 "$template" | sed 's/# //')
+            FILENAME=$(basename "$template")
+            echo "- [$TITLE](./$FILENAME)" >> templates/INDEX.md
+          fi
+        done
+        
+    - name: Commit documentation updates
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "GitHub Action"
+        
+        if [ -n "$(git status --porcelain)" ]; then
+          git add templates/INDEX.md
+          git commit -m "docs: Auto-update template documentation [skip ci]"
+          git push
+        fi
