@@ -1,6 +1,6 @@
 # Changelog
 
-All notable changes to the Multi-Agent Development Team Framework will be documented in this file.
+All notable changes to the Multi-Persona Development Team Framework will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
@@ -11,20 +11,62 @@ The framework consists of several major components that may be versioned indepen
 
 | Component | Current Version | Description |
 |-----------|----------------|-------------|
-| Framework | 1.1.0 | Overall framework version |
-| CLAUDE.md | 1.1.0 | Core framework instructions |
-| Session State Schema | 1.1.0 | JSON structure for state management |
+| Framework | 1.2.0 | Overall framework version |
+| CLAUDE.md | 1.2.0 | Core framework instructions |
+| Session State Schema | 1.2.0 | JSON structure for state management |
 | Command Set | 1.1.0 | Available slash commands |
-| Contract Protocol | 1.0.0 | Inter-role communication format |
-| Role Definitions | 1.1.0 | Role workflows and responsibilities |
+| Contract Protocol | 1.0.0 | Inter-persona communication format |
+| Persona Definitions | 1.2.0 | Persona workflows and responsibilities |
+| Task Management | 1.2.0 | Task queue and coordination system |
 | Directory Structure | 1.0.0 | Framework file organization |
 
 ## [Unreleased]
 
 ### To Add
 - Automated contract validation
-- Role performance metrics
+- Persona performance metrics
 - Enhanced merge conflict resolution
+- Advanced task dependency visualization
+- Cross-persona workload balancing
+
+## [1.2.0] - 2024-01-24
+
+### Component Versions
+- Framework: 1.1.0 → 1.2.0
+- CLAUDE.md: 1.1.0 → 1.2.0
+- Session State Schema: 1.1.0 → 1.2.0
+- Persona Definitions: 1.1.0 → 1.2.0
+- Task Management: NEW → 1.2.0
+
+### Changed
+- **Terminology Transformation**: Complete migration from "subagents" to "personas"
+  - Updated all documentation and code references
+  - Aligned terminology with Claude Code operational vocabulary
+  - Maintained all existing functionality while improving clarity
+
+### Added
+- **Enhanced Task Management System**: Comprehensive task queue management within personas
+  - Task lifecycle: Created → Queued → Active → Blocked/Completed → Archived
+  - Priority framework: High/Medium/Low with dependency tracking
+  - Cross-persona task coordination protocols
+- **Task Templates**: Structured templates for task creation and coordination
+  - `task-template.md`: Comprehensive task definition template
+  - `persona-coordination-template.md`: Cross-persona collaboration framework
+- **Advanced Coordination Features**:
+  - Task dependency tracking between personas
+  - Formal task handoff protocols
+  - Shared artifact management
+  - Coordination point scheduling
+
+### Enhanced
+- **Session State Management**: Extended schema for persona-based task tracking
+  - Task queue states per persona (active, queued, completed, blocked)
+  - Cross-persona coordination tracking
+  - Task dependency and conflict detection
+- **Documentation**: Updated all framework documentation for persona terminology
+  - Enhanced workflows with task-based operations
+  - Improved coordination protocols
+  - Better session continuity with task-aware state management
 
 ## [1.1.0] - 2024-01-23
 
@@ -32,15 +74,15 @@ The framework consists of several major components that may be versioned indepen
 - CLAUDE.md: 1.0.0 → 1.1.0
 - Session State Schema: 1.0.0 → 1.1.0
 - Command Set: 1.0.0 → 1.1.0
-- Role Definitions: 1.0.0 → 1.1.0
+- Persona Definitions: 1.0.0 → 1.1.0
 
 ### Added
-- **Subagent Architecture**: True autonomous parallel execution capability
-  - Each role operates as independent subagent
-  - Subagents spawn using Task tool
+- **Autonomous Architecture**: True autonomous parallel execution capability
+  - Each persona operates independently with specialized workflows
+  - Parallel execution using Task tool
   - Asynchronous coordination through message queues
-- **Multi-Branch Development**: Subagents can work on different git branches simultaneously
-  - Per-subagent git context tracking
+- **Multi-Branch Development**: Personas can work on different git branches simultaneously
+  - Per-persona git context tracking
   - Branch-aware session recovery
   - Isolated development environments
 - **Intelligent Context Management**: Strategies for long sessions
