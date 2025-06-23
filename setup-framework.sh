@@ -2,8 +2,106 @@
 # Multi-Persona Development Framework Setup Script
 # Version: 1.3.0
 # Purpose: Initialize framework structure with optional configuration
+# Can be run locally or from remote URL
 
 set -e
+
+# Remote setup capability
+REPO_URL="https://raw.githubusercontent.com/kholcomb/ClaudeCode_Prompting_Framework/refs/heads/main"
+TEMP_DIR=""
+
+# Cleanup function for remote setup
+cleanup_remote() {
+    if [[ -n "$TEMP_DIR" ]] && [[ -d "$TEMP_DIR" ]]; then
+        rm -rf "$TEMP_DIR"
+    fi
+}
+
+# Download and setup from remote repository
+setup_from_remote() {
+    print_header "\n🌐 Remote Setup Mode"
+    print_info "Downloading framework from GitHub..."
+    
+    # Create temporary directory
+    TEMP_DIR=$(mktemp -d)
+    trap cleanup_remote EXIT
+    
+    # Check for download tools
+    if command -v curl &> /dev/null; then
+        DOWNLOAD_CMD="curl -fsSL"
+    elif command -v wget &> /dev/null; then
+        DOWNLOAD_CMD="wget -qO-"
+    else
+        print_error "Neither curl nor wget is available"
+        print_info "Please install curl or wget and try again"
+        exit 1
+    fi
+    
+    # Download essential files
+    local files_to_download=(
+        "CLAUDE.md"
+        "VERSION"
+        "README.md"
+        "SECURITY.md"
+        "LICENSE"
+        "CHANGELOG.md"
+        ".gitignore"
+        "update-framework.sh"
+        "specs/requirements.md"
+        "specs/project-plan.md"
+        "specs/architecture.md"
+        "specs/constraints.md"
+        "specs/dependencies.md"
+        "templates/CLAUDE.md"
+        "templates/api-contract-template.md"
+        "templates/feature-spec-template.md"
+        "templates/persona-coordination-template.md"
+        "templates/status-report-template.md"
+        "templates/task-template.md"
+        "logs/session-state.json.template"
+        "artifacts/contracts/api/CLAUDE.md"
+        "artifacts/contracts/data/CLAUDE.md"
+        "artifacts/contracts/infrastructure/CLAUDE.md"
+        "artifacts/contracts/security/CLAUDE.md"
+        "artifacts/contracts/testing/CLAUDE.md"
+        "artifacts/deliverables/CLAUDE.md"
+        "logs/CLAUDE.md"
+        "project/README.md"
+    )
+    
+    print_info "Downloading framework files..."
+    for file in "${files_to_download[@]}"; do
+        local dir=$(dirname "$file")
+        mkdir -p "$dir"
+        
+        if $DOWNLOAD_CMD "$REPO_URL/$file" > "$file" 2>/dev/null; then
+            echo "  ✓ $file"
+        else
+            print_warning "Failed to download $file (may not exist in remote)"
+        fi
+    done
+    
+    # Download GitHub workflow templates
+    mkdir -p templates/github-workflows
+    local workflow_files=(
+        "templates/github-workflows/README.md"
+        "templates/github-workflows/framework-ci.yml"
+        "templates/github-workflows/node-api-ci.yml"
+        "templates/github-workflows/python-fastapi-ci.yml"
+        "templates/github-workflows/react-ci.yml"
+    )
+    
+    for file in "${workflow_files[@]}"; do
+        if $DOWNLOAD_CMD "$REPO_URL/$file" > "$file" 2>/dev/null; then
+            echo "  ✓ $file"
+        fi
+    done
+    
+    print_success "Framework files downloaded successfully"
+    
+    # Continue with normal setup
+    print_info "Proceeding with framework initialization..."
+}
 
 # Colors for output
 RED='\033[0;31m'
@@ -15,7 +113,12 @@ CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
 # Framework version
-FRAMEWORK_VERSION=$(cat VERSION 2>/dev/null || echo "1.3.0")
+if [[ -f VERSION ]]; then
+    FRAMEWORK_VERSION=$(cat VERSION)
+else
+    print_warning "VERSION file not found, using default version 1.3.0"
+    FRAMEWORK_VERSION="1.3.0"
+fi
 
 # Print colored output
 print_info() { echo -e "${BLUE}ℹ️  $1${NC}"; }
@@ -39,11 +142,17 @@ EOF
     echo -e "${NC}"
 }
 
-# Check if running from framework root
+# Check if running from framework root or detect remote setup
 check_framework_root() {
+    # If running remotely, skip this check
+    if [[ "$1" == "--remote" ]]; then
+        return 0
+    fi
+    
     if [[ ! -f "CLAUDE.md" ]] || [[ ! -f "VERSION" ]]; then
         print_error "This script must be run from the framework root directory"
         print_info "Please navigate to the multi_agent_prompting_framework_template directory"
+        print_info "Or use remote setup: curl -fsSL $REPO_URL/setup-framework.sh | bash -s -- --remote"
         exit 1
     fi
 }
@@ -239,7 +348,7 @@ init_session_state() {
     "session_info": {
         "session_id": "$(uuidgen 2>/dev/null || date +%s)",
         $project_info
-        "created_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || date +%Y-%m-%dT%H:%M:%SZ)",
+        "created_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || date +%Y-%m-%dT%H:%M:%S%z 2>/dev/null || date)",
         "framework_version": "$FRAMEWORK_VERSION",
         "current_phase": "initialization"
     },
@@ -509,14 +618,18 @@ custom_setup() {
     echo
     read -p "$(echo -e "${CYAN}Initialize git in project/ directory? [y/N]: ${NC}")" git_setup
     if [[ "$(echo "$git_setup" | tr '[:upper:]' '[:lower:]')" == "y" ]]; then
-        cd project/
-        git init
-        echo "# Project" > README.md
-        echo -e "node_modules/\n*.log\n.env\n.DS_Store\nsettings.local.json" > .gitignore
-        git add .
-        git commit -m "Initial project setup" || true
-        cd ..
-        print_success "Git repository initialized"
+        if [[ -d "project" ]]; then
+            cd project/ || { print_error "Failed to change to project/ directory"; exit 1; }
+            git init
+            echo "# Project" > README.md
+            echo -e "node_modules/\n*.log\n.env\n.DS_Store\nsettings.local.json" > .gitignore
+            git add .
+            git commit -m "Initial project setup" || true
+            cd .. || { print_error "Failed to return to framework root"; exit 1; }
+            print_success "Git repository initialized"
+        else
+            print_error "project/ directory does not exist"
+        fi
     fi
     
     create_helper_scripts
@@ -544,6 +657,13 @@ show_completion() {
     echo "     \"Help me understand this framework\""
     echo "     \"Let's plan a new project\""
     echo
+    if [[ "$1" == "--remote" ]]; then
+        echo -e "${CYAN}Remote Setup Complete:${NC}"
+        echo "  • Framework downloaded from: $REPO_URL"
+        echo "  • You can update with: ./update-framework.sh"
+        echo "  • Consider adding this directory to version control"
+    fi
+    echo
     echo -e "${CYAN}Helper Scripts:${NC}"
     echo "  • Reset session: ${GREEN}./reset-session.sh${NC}"
     echo "  • Validate setup: ${GREEN}./validate-setup.sh${NC}"
@@ -569,17 +689,29 @@ show_completion() {
 
 # Main function
 main() {
+    local remote_mode="$1"
+    
     show_banner
-    check_framework_root
+    
+    # Handle remote setup
+    if [[ "$remote_mode" == "--remote" ]]; then
+        setup_from_remote
+    fi
+    
+    check_framework_root "$remote_mode"
     check_dependencies
     
     # Check if already set up
     if [[ -f logs/session-state.json ]] && [[ -d artifacts/contracts ]]; then
         print_warning "Framework appears to be already set up"
-        read -p "$(echo -e "${CYAN}Continue anyway? [y/N]: ${NC}")" continue_setup
-        if [[ "$(echo "$continue_setup" | tr '[:upper:]' '[:lower:]')" != "y" ]]; then
-            print_info "Setup cancelled"
-            exit 0
+        if [[ "$remote_mode" == "--remote" ]]; then
+            print_info "Continuing with remote setup..."
+        else
+            read -p "$(echo -e "${CYAN}Continue anyway? [y/N]: ${NC}")" continue_setup
+            if [[ "$(echo "$continue_setup" | tr '[:upper:]' '[:lower:]')" != "y" ]]; then
+                print_info "Setup cancelled"
+                exit 0
+            fi
         fi
     fi
     
@@ -607,11 +739,50 @@ main() {
     
     # Validate setup
     echo
-    ./validate-setup.sh
+    if [[ -f "validate-setup.sh" ]] && [[ -x "validate-setup.sh" ]]; then
+        ./validate-setup.sh
+    else
+        print_warning "validate-setup.sh not found or not executable, skipping validation"
+    fi
     
     # Show completion
     show_completion
 }
 
-# Run main function
-main "$@"
+# Usage information
+show_usage() {
+    echo "Usage: $0 [--remote]"
+    echo ""
+    echo "Options:"
+    echo "  --remote    Download and setup framework from GitHub"
+    echo "  --help      Show this help message"
+    echo ""
+    echo "Remote usage:"
+    echo "  curl -fsSL $REPO_URL/setup-framework.sh | bash -s -- --remote"
+    echo "  wget -qO- $REPO_URL/setup-framework.sh | bash -s -- --remote"
+}
+
+# Handle command line arguments
+case "${1:-}" in
+    --help|-h)
+        show_usage
+        exit 0
+        ;;
+    --remote)
+        # Validate we're in an empty or new directory for remote setup
+        if [[ -f "CLAUDE.md" ]] && [[ ! "$PWD" =~ /tmp ]]; then
+            print_warning "Framework files already exist in current directory"
+            print_info "Remote setup is intended for new/empty directories"
+            exit 1
+        fi
+        main "$@"
+        ;;
+    "")
+        main "$@"
+        ;;
+    *)
+        print_error "Unknown option: $1"
+        show_usage
+        exit 1
+        ;;
+esac
