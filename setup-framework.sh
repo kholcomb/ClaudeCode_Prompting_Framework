@@ -110,6 +110,41 @@ setup_from_remote() {
     print_info "Proceeding with framework initialization..."
 }
 
+# Download essential framework files for local setup
+download_essential_files() {
+    # Check for download tools
+    if command -v curl &> /dev/null; then
+        DOWNLOAD_CMD="curl -fsSL"
+    elif command -v wget &> /dev/null; then
+        DOWNLOAD_CMD="wget -qO-"
+    else
+        print_error "Neither curl nor wget is available"
+        print_info "Please install curl or wget to download framework files"
+        return 1
+    fi
+    
+    # Essential framework files
+    local essential_files=(
+        "CLAUDE.md"
+        "VERSION"
+        "README.md"
+        "SECURITY.md"
+        "LICENSE"
+        "CHANGELOG.md"
+    )
+    
+    print_info "Downloading essential framework files..."
+    for file in "${essential_files[@]}"; do
+        if $DOWNLOAD_CMD "$REPO_URL/$file" > "$file" 2>/dev/null; then
+            echo "  ✓ $file"
+        else
+            print_warning "Failed to download $file"
+        fi
+    done
+    
+    print_success "Essential files downloaded"
+}
+
 # Colors for output
 RED='\033[0;31m'
 GREEN='\033[0;32m'
@@ -149,20 +184,6 @@ EOF
     echo -e "${NC}"
 }
 
-# Check if running from framework root or detect remote setup
-check_framework_root() {
-    # If running remotely, skip this check
-    if [[ "$1" == "--remote" ]]; then
-        return 0
-    fi
-    
-    if [[ ! -f "CLAUDE.md" ]] || [[ ! -f "VERSION" ]]; then
-        print_error "This script must be run from the framework root directory"
-        print_info "Please navigate to the multi_agent_prompting_framework_template directory"
-        print_info "Or use remote setup: curl -fsSL $REPO_URL/setup-framework.sh | bash -s -- --remote"
-        exit 1
-    fi
-}
 
 # Check basic dependencies
 check_dependencies() {
@@ -483,16 +504,29 @@ echo "🔍 Validating framework setup..."
 
 errors=0
 
-# Check required files
-required_files=("CLAUDE.md" "VERSION" "README.md" "logs/session-state.json")
-for file in "${required_files[@]}"; do
+# Check framework files (warn but don't fail if missing)
+framework_files=("CLAUDE.md" "VERSION" "README.md")
+missing_framework=0
+for file in "${framework_files[@]}"; do
     if [[ ! -f "$file" ]]; then
-        echo "❌ Missing required file: $file"
-        ((errors++))
+        echo "⚠️  Framework file not found: $file"
+        ((missing_framework++))
     else
         echo "✅ Found: $file"
     fi
 done
+
+if [[ $missing_framework -gt 0 ]]; then
+    echo "ℹ️  $missing_framework framework files missing (may be local-only setup)"
+fi
+
+# Check essential setup files
+if [[ ! -f "logs/session-state.json" ]]; then
+    echo "❌ Missing essential file: logs/session-state.json"
+    ((errors++))
+else
+    echo "✅ Found: logs/session-state.json"
+fi
 
 # Check required directories
 required_dirs=("project" "specs" "artifacts" "logs" ".claude")
@@ -551,7 +585,6 @@ quick_setup() {
     create_claude_commands
     init_session_state "all"
     setup_vscode
-    create_helper_scripts
     
     print_success "Quick setup complete!"
 }
@@ -639,8 +672,6 @@ custom_setup() {
         fi
     fi
     
-    create_helper_scripts
-    
     print_success "Custom setup complete!"
 }
 
@@ -653,13 +684,12 @@ show_completion() {
     echo "  ✓ Framework directory structure"
     echo "  ✓ Claude Code command templates (.claude/commands/)"
     echo "  ✓ Session state configuration"
-    echo "  ✓ Helper scripts (reset-session.sh, validate-setup.sh)"
     [[ -f .vscode/settings.json ]] && echo "  ✓ VS Code workspace configuration"
     [[ -d project/.git ]] && echo "  ✓ Git repository in project/"
     echo
     echo -e "${CYAN}Next Steps:${NC}"
     echo "  1. Start Claude Code from this directory:"
-    echo "     ${GREEN}claude${NC}"
+    echo -e "     ${GREEN}claude${NC}"
     echo "  2. Begin with a simple request like:"
     echo "     \"Help me understand this framework\""
     echo "     \"Let's plan a new project\""
@@ -671,21 +701,17 @@ show_completion() {
         echo "  • Consider adding this directory to version control"
     fi
     echo
-    echo -e "${CYAN}Helper Scripts:${NC}"
-    echo "  • Reset session: ${GREEN}./reset-session.sh${NC}"
-    echo "  • Validate setup: ${GREEN}./validate-setup.sh${NC}"
-    echo
     echo -e "${CYAN}Available Commands:${NC}"
-    echo "  • ${GREEN}/think${NC} - Structured reasoning for complex decisions"
-    echo "  • ${GREEN}/efficient${NC} - Token-optimized responses for long sessions"  
-    echo "  • ${GREEN}/pm${NC} - Project Manager persona"
-    echo "  • ${GREEN}/architect${NC} - System Architect persona"
-    echo "  • ${GREEN}/frontend${NC} - Frontend Developer persona"
-    echo "  • ${GREEN}/backend${NC} - Backend Developer persona"
-    echo "  • ${GREEN}/qa${NC} - QA Engineer persona"
-    echo "  • ${GREEN}/devops${NC} - DevOps Engineer persona"
-    echo "  • ${GREEN}/security${NC} - Security Engineer persona"
-    echo "  • ${GREEN}/cloud${NC} - Cloud Engineer persona"
+    echo -e "  • ${GREEN}/think${NC} - Structured reasoning for complex decisions"
+    echo -e "  • ${GREEN}/efficient${NC} - Token-optimized responses for long sessions"  
+    echo -e "  • ${GREEN}/pm${NC} - Project Manager persona"
+    echo -e "  • ${GREEN}/architect${NC} - System Architect persona"
+    echo -e "  • ${GREEN}/frontend${NC} - Frontend Developer persona"
+    echo -e "  • ${GREEN}/backend${NC} - Backend Developer persona"
+    echo -e "  • ${GREEN}/qa${NC} - QA Engineer persona"
+    echo -e "  • ${GREEN}/devops${NC} - DevOps Engineer persona"
+    echo -e "  • ${GREEN}/security${NC} - Security Engineer persona"
+    echo -e "  • ${GREEN}/cloud${NC} - Cloud Engineer persona"
     echo
     echo -e "${CYAN}Important:${NC}"
     echo "  • Always run Claude from the framework root"
@@ -700,20 +726,28 @@ main() {
     
     show_banner
     
-    # Handle remote setup
-    if [[ "$remote_mode" == "--remote" ]]; then
-        setup_from_remote
-    fi
+    # Choose setup mode first (before downloading in remote mode)
+    local setup_mode=""
+    local needs_download=false
     
-    check_framework_root "$remote_mode"
-    check_dependencies
-    
-    # Check if already set up
-    if [[ -f logs/session-state.json ]] && [[ -d artifacts/contracts ]]; then
-        print_warning "Framework appears to be already set up"
-        if [[ "$remote_mode" == "--remote" ]]; then
-            print_info "Continuing with remote setup..."
-        else
+    if [[ "$remote_mode" != "--remote" ]]; then
+        check_dependencies
+        
+        # Check if framework files are missing
+        if [[ ! -f "CLAUDE.md" ]] || [[ ! -f "VERSION" ]] || [[ ! -f "README.md" ]]; then
+            print_warning "Framework files not found in current directory"
+            print_info "This appears to be a fresh setup location"
+            read -p "$(echo -e "${CYAN}Download framework files from GitHub? [Y/n]: ${NC}")" download_choice
+            if [[ "$(echo "$download_choice" | tr '[:upper:]' '[:lower:]')" != "n" ]]; then
+                needs_download=true
+            else
+                print_info "Proceeding with local-only setup (limited functionality)"
+            fi
+        fi
+        
+        # Check if already set up
+        if [[ -f logs/session-state.json ]] && [[ -d artifacts/contracts ]]; then
+            print_warning "Framework appears to be already set up"
             read -p "$(echo -e "${CYAN}Continue anyway? [y/N]: ${NC}")" continue_setup
             if [[ "$(echo "$continue_setup" | tr '[:upper:]' '[:lower:]')" != "y" ]]; then
                 print_info "Setup cancelled"
@@ -725,32 +759,43 @@ main() {
     # Choose setup mode
     echo
     print_header "Setup Options:"
-    echo "  ${GREEN}[Q]uick${NC} - Minimal setup with defaults (recommended)"
-    echo "  ${BLUE}[C]ustom${NC} - Choose what to configure"
-    echo "  ${RED}[E]xit${NC} - Cancel setup"
+    echo -e "  ${GREEN}[Q]uick${NC} - Minimal setup with defaults (recommended)"
+    echo -e "  ${BLUE}[C]ustom${NC} - Choose what to configure"
+    echo -e "  ${RED}[E]xit${NC} - Cancel setup"
     echo
     read -p "$(echo -e "${CYAN}Select setup mode [Q/c/e]: ${NC}")" setup_mode
     
     case "$(echo "$setup_mode" | tr '[:upper:]' '[:lower:]')" in
         c|custom)
-            custom_setup
+            setup_mode="custom"
             ;;
         e|exit)
             print_info "Setup cancelled"
             exit 0
             ;;
         *)
+            setup_mode="quick"
+            ;;
+    esac
+    
+    # Handle file downloads AFTER getting user preferences
+    if [[ "$remote_mode" == "--remote" ]]; then
+        setup_from_remote
+        check_dependencies
+    elif [[ "$needs_download" == "true" ]]; then
+        print_info "Downloading framework files..."
+        download_essential_files
+    fi
+    
+    case "$(echo "$setup_mode" | tr '[:upper:]' '[:lower:]')" in
+        custom)
+            custom_setup
+            ;;
+        *)
             quick_setup
             ;;
     esac
     
-    # Validate setup
-    echo
-    if [[ -f "validate-setup.sh" ]] && [[ -x "validate-setup.sh" ]]; then
-        ./validate-setup.sh
-    else
-        print_warning "validate-setup.sh not found or not executable, skipping validation"
-    fi
     
     # Show completion
     show_completion "$remote_mode"
