@@ -182,19 +182,35 @@ The framework uses a contract-based communication system:
 
 ### Initial Setup
 
-1. **Create Your Project from Template**:
-   ```bash
-   # Option 1: Use this template on GitHub
-   # Click "Use this template" button on GitHub, then clone your new repo
-   
-   # Option 2: Clone and reinitialize
-   git clone https://github.com/yourusername/multi_agent_prompting_framework_template.git my-project-name
-   cd my-project-name
-   rm -rf .git                    # Remove template history
-   git init                       # Initialize as your project
-   git add .
-   git commit -m "Initial commit from multi-agent framework template"
-   ```
+You can set up the framework in several ways:
+
+#### Option 1: Remote Setup (Recommended)
+```bash
+# Quick setup from anywhere - no cloning required
+curl -fsSL https://raw.githubusercontent.com/kholcomb/ClaudeCode_Prompting_Framework/refs/heads/main/setup-framework.sh | bash -s -- --remote
+
+# Alternative with wget
+wget -qO- https://raw.githubusercontent.com/kholcomb/ClaudeCode_Prompting_Framework/refs/heads/main/setup-framework.sh | bash -s -- --remote
+```
+
+#### Option 2: Use GitHub Template
+```bash
+# Click "Use this template" button on GitHub, then clone your new repo
+git clone https://github.com/yourusername/your-new-repo.git my-project-name
+cd my-project-name
+./setup-framework.sh
+```
+
+#### Option 3: Clone and Reinitialize  
+```bash
+git clone https://github.com/kholcomb/ClaudeCode_Prompting_Framework.git my-project-name
+cd my-project-name
+rm -rf .git                    # Remove template history
+git init                       # Initialize as your project
+git add .
+git commit -m "Initial commit from multi-agent framework template"
+./setup-framework.sh
+```
 
 2. **Set Up Git Repository Structure**:
    ```bash
@@ -519,6 +535,44 @@ Let me assess the project structure and requirements...
 - Maintain traceability throughout development
 
 ## Setup Guide
+
+### Framework Setup Script
+
+The framework includes a comprehensive setup script (`setup-framework.sh`) that provides both local and remote installation capabilities.
+
+#### Setup Script Features
+- **Remote Setup**: Download and initialize framework from GitHub without cloning
+- **Local Setup**: Initialize framework from existing local files  
+- **Interactive Configuration**: Choose personas, project settings, and development environment
+- **Automatic Structure**: Creates complete directory structure and session management
+- **VS Code Integration**: Optional workspace configuration and recommended extensions
+- **Helper Scripts**: Generates validation and reset utilities
+- **Session Management**: Initializes session state with proper persona configuration
+
+#### Setup Script Usage
+
+**Local Setup**:
+```bash
+# From framework directory
+./setup-framework.sh
+```
+
+**Remote Setup**:
+```bash
+# From any directory
+curl -fsSL https://raw.githubusercontent.com/kholcomb/ClaudeCode_Prompting_Framework/refs/heads/main/setup-framework.sh | bash -s -- --remote
+```
+
+**Setup Options**:
+- **Quick Setup**: Default configuration with all personas enabled
+- **Custom Setup**: Choose specific personas, project name, VS Code config, git initialization
+
+**Generated Files**:
+- `.claude/commands/`: Claude Code command templates for all personas
+- `logs/session-state.json`: Active session configuration
+- `reset-session.sh`: Session reset utility
+- `validate-setup.sh`: Setup validation tool
+- Complete directory structure for organized development
 
 ### Understanding the Framework Structure
 
