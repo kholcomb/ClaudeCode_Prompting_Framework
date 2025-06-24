@@ -2,8 +2,24 @@
 
 A prompt engineering template that enables Claude Code to assist with software development through specialized personas, providing structured workflows and organized task management.
 
+## 🚀 Quick Start
+
+**Get started in 30 seconds with one command:**
+
+```bash
+curl -fsSL https://raw.githubusercontent.com/kholcomb/ClaudeCode_Prompting_Framework/refs/heads/main/setup-framework.sh | bash -s -- --remote
+```
+
+*No cloning required! This command downloads and sets up the complete framework in your current directory.*
+
+**Alternative with wget:**
+```bash
+wget -qO- https://raw.githubusercontent.com/kholcomb/ClaudeCode_Prompting_Framework/refs/heads/main/setup-framework.sh | bash -s -- --remote
+```
+
 ## Table of Contents
 
+- [Quick Start](#-quick-start)
 - [Overview](#overview)
 - [Key Features](#key-features)
 - [Framework Structure](#framework-structure)
@@ -14,7 +30,7 @@ A prompt engineering template that enables Claude Code to assist with software d
 - [Framework Components](#framework-components)
 - [Usage Examples](#usage-examples)
 - [Best Practices](#best-practices)
-- [New Commands](#new-commands)
+- [Available Commands](#available-commands)
 - [Troubleshooting](#troubleshooting)
 
 ## Overview
