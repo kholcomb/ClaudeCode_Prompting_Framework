@@ -119,6 +119,13 @@ PURPLE='\033[0;35m'
 CYAN='\033[0;36m'
 NC='\033[0m' # No Color
 
+# Print colored output
+print_info() { echo -e "${BLUE}ℹ️  $1${NC}"; }
+print_success() { echo -e "${GREEN}✅ $1${NC}"; }
+print_warning() { echo -e "${YELLOW}⚠️  $1${NC}"; }
+print_error() { echo -e "${RED}❌ $1${NC}"; }
+print_header() { echo -e "${PURPLE}$1${NC}"; }
+
 # Framework version
 if [[ -f VERSION ]]; then
     FRAMEWORK_VERSION=$(cat VERSION)
@@ -126,13 +133,6 @@ else
     print_warning "VERSION file not found, using default version 1.3.0"
     FRAMEWORK_VERSION="1.3.0"
 fi
-
-# Print colored output
-print_info() { echo -e "${BLUE}ℹ️  $1${NC}"; }
-print_success() { echo -e "${GREEN}✅ $1${NC}"; }
-print_warning() { echo -e "${YELLOW}⚠️  $1${NC}"; }
-print_error() { echo -e "${RED}❌ $1${NC}"; }
-print_header() { echo -e "${PURPLE}$1${NC}"; }
 
 # ASCII Art Banner
 show_banner() {
@@ -753,7 +753,7 @@ main() {
     fi
     
     # Show completion
-    show_completion
+    show_completion "$remote_mode"
 }
 
 # Usage information
