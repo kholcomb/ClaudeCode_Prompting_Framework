@@ -131,10 +131,22 @@ download_essential_files() {
         "SECURITY.md"
         "LICENSE"
         "CHANGELOG.md"
+        ".claude/commands/help.md"
+        ".claude/commands/status.md"
+        ".claude/commands/dev.md"
+        ".claude/commands/test.md"
+        ".claude/commands/docs.md"
+        ".claude/commands/review.md"
+        ".claude/commands/plan.md"
+        ".claude/commands/checkpoint.md"
+        ".claude/commands/end-session.md"
     )
     
     print_info "Downloading essential framework files..."
     for file in "${essential_files[@]}"; do
+        local dir=$(dirname "$file")
+        mkdir -p "$dir"
+        
         if $DOWNLOAD_CMD "$REPO_URL/$file" > "$file" 2>/dev/null; then
             echo "  ✓ $file"
         else
@@ -224,125 +236,20 @@ init_directories() {
     print_success "Directory structure created"
 }
 
-# Create Claude Code command templates
+# Copy Claude Code command templates from framework
 create_claude_commands() {
-    print_header "\n⚡ Creating Claude Code Commands"
+    print_header "\n⚡ Setting Up Claude Code Commands"
     
-    # Create /think command
-    cat > .claude/commands/think.md << 'EOF'
-# Think Command
-
-## Description
-Engage structured reasoning mode for complex decisions and analysis.
-
-## Usage
-`/think <question or problem>`
-
-## Behavior
-- Break down complex problems systematically
-- Show step-by-step reasoning
-- Consider multiple perspectives
-- Identify assumptions and constraints
-- Provide clear conclusions with rationale
-
-## Examples
-- `/think How should we architect this microservice?`
-- `/think What are the tradeoffs between these two approaches?`
-- `/think What could go wrong with this implementation?`
-EOF
-
-    # Create /efficient command
-    cat > .claude/commands/efficient.md << 'EOF'
-# Efficient Command
-
-## Description
-Switch to token-optimized response mode for long sessions.
-
-## Usage
-`/efficient` or `/efficient <task>`
-
-## Behavior
-- Compress responses to essential information
-- Use concise language and bullet points
-- Minimize explanatory text
-- Focus on actionable outcomes
-- Preserve accuracy while reducing verbosity
-
-## When to Use
-- Long coding sessions approaching context limits
-- Repetitive tasks with established patterns
-- When you need rapid iteration cycles
-- Large codebases with many file operations
-
-## Examples
-- `/efficient` (switches mode for subsequent responses)
-- `/efficient implement these 5 similar functions`
-EOF
-
-    # Create persona command templates
-    for persona in pm architect frontend backend qa devops security cloud; do
-        case $persona in
-            pm)
-                persona_name="Project Manager"
-                workflow="coordinate → plan → track → communicate"
-                ;;
-            architect)
-                persona_name="Architect"
-                workflow="explore → design → validate → document"
-                ;;
-            frontend)
-                persona_name="Frontend Developer"
-                workflow="explore → plan → code → commit"
-                ;;
-            backend)
-                persona_name="Backend Developer"
-                workflow="explore → plan → code → commit"
-                ;;
-            qa)
-                persona_name="QA Engineer"
-                workflow="write tests → validate → iterate → commit"
-                ;;
-            devops)
-                persona_name="DevOps Engineer"
-                workflow="assess → configure → deploy → monitor"
-                ;;
-            security)
-                persona_name="Security Engineer"
-                workflow="audit → identify → mitigate → validate"
-                ;;
-            cloud)
-                persona_name="Cloud Engineer"
-                workflow="analyze → architect → provision → optimize"
-                ;;
-        esac
-        
-        cat > .claude/commands/${persona}.md << EOF
-# ${persona_name} Command
-
-## Description
-Activate ${persona_name} persona with specialized workflow and expertise.
-
-## Usage
-\`/${persona} <task or question>\`
-
-## Workflow
-${workflow}
-
-## Behavior
-- Operate within ${persona_name} domain expertise
-- Follow structured workflow appropriate to role
-- Coordinate with other personas when needed
-- Maintain role-specific documentation and artifacts
-- Use specialized tools and patterns for the role
-
-## Examples
-- \`/${persona} analyze the current system architecture\`
-- \`/${persona} plan the implementation approach\`
-- \`/${persona} review and provide feedback\`
-EOF
-    done
+    # The .claude/commands directory is already created by init_directories
+    # and should already contain the actual command files
     
-    print_success "Claude Code commands created"
+    if [[ -d ".claude/commands" ]] && [[ $(ls -A .claude/commands 2>/dev/null) ]]; then
+        local cmd_count=$(ls .claude/commands/*.md 2>/dev/null | wc -l | tr -d ' ')
+        print_success "Claude Code commands available ($cmd_count commands)"
+    else
+        print_warning "No command templates found in .claude/commands/"
+        print_info "Framework commands should be downloaded with framework files"
+    fi
 }
 
 # Initialize session state
@@ -702,16 +609,20 @@ show_completion() {
     fi
     echo
     echo -e "${CYAN}Available Commands:${NC}"
-    echo -e "  • ${GREEN}/think${NC} - Structured reasoning for complex decisions"
-    echo -e "  • ${GREEN}/efficient${NC} - Token-optimized responses for long sessions"  
-    echo -e "  • ${GREEN}/pm${NC} - Project Manager persona"
-    echo -e "  • ${GREEN}/architect${NC} - System Architect persona"
-    echo -e "  • ${GREEN}/frontend${NC} - Frontend Developer persona"
-    echo -e "  • ${GREEN}/backend${NC} - Backend Developer persona"
-    echo -e "  • ${GREEN}/qa${NC} - QA Engineer persona"
-    echo -e "  • ${GREEN}/devops${NC} - DevOps Engineer persona"
-    echo -e "  • ${GREEN}/security${NC} - Security Engineer persona"
-    echo -e "  • ${GREEN}/cloud${NC} - Cloud Engineer persona"
+    if [[ -d ".claude/commands" ]] && [[ $(ls -A .claude/commands 2>/dev/null) ]]; then
+        echo -e "  • ${GREEN}/help${NC} - Display comprehensive framework help and command reference"
+        echo -e "  • ${GREEN}/status${NC} - Project status, progress tracking, and team overview"
+        echo -e "  • ${GREEN}/dev${NC} - Core development workflow for implementing features"
+        echo -e "  • ${GREEN}/test${NC} - QA and testing workflows"
+        echo -e "  • ${GREEN}/docs${NC} - Documentation synchronization and management"
+        echo -e "  • ${GREEN}/review${NC} - Request code or design reviews"
+        echo -e "  • ${GREEN}/plan${NC} - Create and update project plans"
+        echo -e "  • ${GREEN}/checkpoint${NC} - Create project milestone checkpoints"
+        echo -e "  • ${GREEN}/end-session${NC} - Properly close development sessions"
+    else
+        echo -e "  • Commands will be available after downloading framework files"
+        echo -e "  • Use ${GREEN}/help${NC} command for comprehensive guidance"
+    fi
     echo
     echo -e "${CYAN}Important:${NC}"
     echo "  • Always run Claude from the framework root"
