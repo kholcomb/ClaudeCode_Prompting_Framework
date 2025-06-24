@@ -182,19 +182,35 @@ The framework uses a contract-based communication system:
 
 ### Initial Setup
 
-1. **Create Your Project from Template**:
-   ```bash
-   # Option 1: Use this template on GitHub
-   # Click "Use this template" button on GitHub, then clone your new repo
-   
-   # Option 2: Clone and reinitialize
-   git clone https://github.com/yourusername/multi_agent_prompting_framework_template.git my-project-name
-   cd my-project-name
-   rm -rf .git                    # Remove template history
-   git init                       # Initialize as your project
-   git add .
-   git commit -m "Initial commit from multi-agent framework template"
-   ```
+You can set up the framework in several ways:
+
+#### Option 1: Remote Setup (Recommended)
+```bash
+# Quick setup from anywhere - no cloning required
+curl -fsSL https://raw.githubusercontent.com/kholcomb/ClaudeCode_Prompting_Framework/refs/heads/main/setup-framework.sh | bash -s -- --remote
+
+# Alternative with wget
+wget -qO- https://raw.githubusercontent.com/kholcomb/ClaudeCode_Prompting_Framework/refs/heads/main/setup-framework.sh | bash -s -- --remote
+```
+
+#### Option 2: Use GitHub Template
+```bash
+# Click "Use this template" button on GitHub, then clone your new repo
+git clone https://github.com/yourusername/your-new-repo.git my-project-name
+cd my-project-name
+./setup-framework.sh
+```
+
+#### Option 3: Clone and Reinitialize  
+```bash
+git clone https://github.com/kholcomb/ClaudeCode_Prompting_Framework.git my-project-name
+cd my-project-name
+rm -rf .git                    # Remove template history
+git init                       # Initialize as your project
+git add .
+git commit -m "Initial commit from multi-agent framework template"
+./setup-framework.sh
+```
 
 2. **Set Up Git Repository Structure**:
    ```bash
@@ -520,6 +536,44 @@ Let me assess the project structure and requirements...
 
 ## Setup Guide
 
+### Framework Setup Script
+
+The framework includes a comprehensive setup script (`setup-framework.sh`) that provides both local and remote installation capabilities.
+
+#### Setup Script Features
+- **Remote Setup**: Download and initialize framework from GitHub without cloning
+- **Local Setup**: Initialize framework from existing local files  
+- **Interactive Configuration**: Choose personas, project settings, and development environment
+- **Automatic Structure**: Creates complete directory structure and session management
+- **VS Code Integration**: Optional workspace configuration and recommended extensions
+- **Helper Scripts**: Generates validation and reset utilities
+- **Session Management**: Initializes session state with proper persona configuration
+
+#### Setup Script Usage
+
+**Local Setup**:
+```bash
+# From framework directory
+./setup-framework.sh
+```
+
+**Remote Setup**:
+```bash
+# From any directory
+curl -fsSL https://raw.githubusercontent.com/kholcomb/ClaudeCode_Prompting_Framework/refs/heads/main/setup-framework.sh | bash -s -- --remote
+```
+
+**Setup Options**:
+- **Quick Setup**: Default configuration with all personas enabled
+- **Custom Setup**: Choose specific personas, project name, VS Code config, git initialization
+
+**Generated Files**:
+- `.claude/commands/`: Claude Code command templates for all personas
+- `logs/session-state.json`: Active session configuration
+- `reset-session.sh`: Session reset utility
+- `validate-setup.sh`: Setup validation tool
+- Complete directory structure for organized development
+
 ### Understanding the Framework Structure
 
 #### The CLAUDE.md File
@@ -765,21 +819,28 @@ git commit -m "Initialize project repository"
 
 ---
 
-## New Commands
+## Available Commands
 
-### Think Command (`/think`)
-Activates explicit reasoning mode for complex decisions:
-- Structured problem analysis
-- Multiple solution exploration
-- Documented decision rationale
-- Risk assessment and mitigation
+The framework includes several specialized commands to enhance development workflows:
 
-### Efficient Command (`/efficient`)
-Enables token-efficient responses:
-- Compressed output for long sessions
-- Code-focused responses  
-- Automatic context optimization
-- Preserves critical information
+### Core Framework Commands
+- `/help` - Display framework help and usage information
+- `/status` - Check project status and persona activity
+- `/checkpoint` - Create project milestone checkpoints
+- `/review` - Request code or design reviews
+- `/plan` - Create and update project plans
+- `/end-session` - Properly close development sessions
+
+### Development Workflow Commands
+- `/dev` - Core development workflow for implementing features
+- `/docs` - Documentation synchronization and management  
+- `/test` - QA and testing workflows
+
+### Persona Commands
+The framework uses persona-based development instead of individual role commands:
+- Request specific personas directly: "As the architect..." or "Acting as the backend developer..."
+- Personas automatically follow their defined workflows and SDLC processes
+- Multiple personas can work in parallel using the Task tool for coordination
 
 ### Example Usage
 
@@ -800,30 +861,23 @@ Backend Persona: Implementing API endpoints in feature/api-v2
 - Task Queue: Active [User endpoints], Queued [Auth middleware]
 ```
 
-**Using Think Mode:**
+**Persona-Based Development:**
 ```
-Human: We need to decide between GraphQL and REST for our API
+Human: As the architect, analyze our database requirements and design the schema
 
-Claude: Let me engage think mode for this architectural decision...
+Claude (as Architect): I'll design the database schema following the explore → design → validate → document workflow...
 
-**Decision: API Architecture Choice**
-Problem Statement: Choose between GraphQL and REST for a multi-client application...
-
-[Structured analysis of both options with pros/cons]
-
-Decision: REST with OpenAPI specification, rationale: [detailed reasoning]
+[Explores requirements, designs schema, validates with stakeholders, documents in specs/]
 ```
 
-**Efficient Mode for Long Sessions:**
-```  
-Human: Switch to efficient mode - we have a lot of components to implement
+**SDLC Integration:**
+```
+Human: Set up our project to use GitFlow methodology
 
-Claude: ✓ Efficient mode active
-- Concise responses
-- Code-focused output
-- Context optimized
+Claude (as Project Manager): I'll configure GitFlow SDLC methodology for the project...
 
-Ready for rapid development.
+[Updates .sdlc-config.yml, configures branch protection rules, sets up quality gates]
+[All personas now follow GitFlow branch strategy and review requirements]
 ```
 
 ## Contributing

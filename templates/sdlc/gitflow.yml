@@ -1,0 +1,418 @@
+# GitFlow SDLC Configuration Template
+# https://nvie.com/posts/a-successful-git-branching-model/
+
+metadata:
+  name: "GitFlow"
+  description: "Traditional branching model with develop and main branches"
+  best_for: "Planned releases, stable production environments"
+  complexity: "medium"
+  team_size: "5-20 developers"
+
+# Branch strategy configuration
+branches:
+  main:
+    description: "Production-ready code"
+    protection:
+      enabled: true
+      required_reviews: 2
+      dismiss_stale_reviews: true
+      require_up_to_date: true
+      required_status_checks:
+        - "ci/tests"
+        - "ci/security-scan"
+        - "ci/build"
+      restrictions:
+        users: []
+        teams: ["maintainers"]
+    merge_strategies: ["merge"]
+    auto_delete_head_branches: false
+
+  develop:
+    description: "Integration branch for features"
+    protection:
+      enabled: true
+      required_reviews: 1
+      dismiss_stale_reviews: false
+      require_up_to_date: true
+      required_status_checks:
+        - "ci/tests"
+        - "ci/lint"
+    merge_strategies: ["merge", "squash"]
+    auto_delete_head_branches: true
+
+  feature:
+    pattern: "feature/{ticket-id}-{short-description}"
+    base_branch: "develop"
+    merge_target: "develop"
+    description: "Feature development branches"
+    naming_rules:
+      - "Must start with 'feature/'"
+      - "Must include ticket/issue ID"
+      - "Use kebab-case for description"
+      - "Maximum 50 characters total"
+    lifecycle:
+      - "Branch from develop"
+      - "Develop feature"
+      - "Create PR to develop"
+      - "Code review and approval"
+      - "Merge to develop"
+      - "Delete feature branch"
+
+  release:
+    pattern: "release/{version}"
+    base_branch: "develop"
+    merge_targets: ["main", "develop"]
+    description: "Release preparation branches"
+    naming_rules:
+      - "Must start with 'release/'"
+      - "Must follow semantic versioning (e.g., 1.2.0)"
+    lifecycle:
+      - "Branch from develop when feature complete"
+      - "Bug fixes and release preparation only"
+      - "Create PR to main"
+      - "Merge to main and tag release"
+      - "Merge back to develop"
+      - "Delete release branch"
+
+  hotfix:
+    pattern: "hotfix/{ticket-id}-{short-description}"
+    base_branch: "main"
+    merge_targets: ["main", "develop"]
+    description: "Emergency fixes for production"
+    naming_rules:
+      - "Must start with 'hotfix/'"
+      - "Must include ticket/issue ID"
+      - "Use kebab-case for description"
+    lifecycle:
+      - "Branch from main"
+      - "Fix critical issue"
+      - "Create PR to main"
+      - "Emergency review and approval"
+      - "Merge to main and tag"
+      - "Merge to develop"
+      - "Delete hotfix branch"
+
+# Workflow stages and requirements
+workflow:
+  feature_development:
+    steps:
+      - name: "Create Feature Branch"
+        description: "Branch from develop using naming convention"
+        required: true
+        automation: "branch_creation_validation"
+      
+      - name: "Implement Feature"
+        description: "Develop feature with tests and documentation"
+        required: true
+        quality_gates:
+          - "unit_tests_pass"
+          - "code_coverage_80_percent"
+          - "lint_checks_pass"
+      
+      - name: "Create Pull Request"
+        description: "Create PR from feature to develop"
+        required: true
+        automation: "pr_template_application"
+        reviewers:
+          required_count: 1
+          required_personas: ["qa_engineer"]
+          auto_assign: true
+      
+      - name: "Code Review"
+        description: "Peer review and QA approval"
+        required: true
+        approval_criteria:
+          - "All automated checks pass"
+          - "Required reviewers approve"
+          - "No unresolved comments"
+      
+      - name: "Merge to Develop"
+        description: "Merge approved changes to develop"
+        required: true
+        automation: "auto_merge_on_approval"
+
+  release_process:
+    steps:
+      - name: "Create Release Branch"
+        description: "Branch from develop when features complete"
+        required: true
+        trigger: "manual"
+        validation: "develop_branch_stable"
+      
+      - name: "Release Preparation"
+        description: "Bug fixes, version updates, documentation"
+        required: true
+        allowed_changes:
+          - "Bug fixes only"
+          - "Version number updates"
+          - "Documentation updates"
+          - "Configuration changes"
+      
+      - name: "Release Testing"
+        description: "Comprehensive testing of release candidate"
+        required: true
+        quality_gates:
+          - "integration_tests_pass"
+          - "e2e_tests_pass"
+          - "performance_tests_pass"
+          - "security_scan_pass"
+      
+      - name: "Merge to Main"
+        description: "Merge release to main and tag"
+        required: true
+        reviewers:
+          required_count: 2
+          required_personas: ["project_manager", "qa_engineer"]
+        post_merge:
+          - "create_git_tag"
+          - "trigger_production_deployment"
+      
+      - name: "Merge to Develop"
+        description: "Merge release changes back to develop"
+        required: true
+        automation: "auto_merge_after_main"
+
+  hotfix_process:
+    steps:
+      - name: "Create Hotfix Branch"
+        description: "Branch from main for emergency fix"
+        required: true
+        trigger: "critical_production_issue"
+        validation: "main_branch_stable"
+      
+      - name: "Implement Fix"
+        description: "Minimal fix for critical issue"
+        required: true
+        constraints:
+          - "Minimal changes only"
+          - "Focus on fix, not enhancement"
+          - "Include regression tests"
+      
+      - name: "Emergency Review"
+        description: "Expedited review process"
+        required: true
+        reviewers:
+          required_count: 1
+          required_personas: ["security_engineer", "qa_engineer"]
+        time_limit: "2_hours"
+      
+      - name: "Deploy to Production"
+        description: "Deploy hotfix to production"
+        required: true
+        approval_required: ["project_manager"]
+        rollback_plan: "required"
+
+# Persona-specific responsibilities
+personas:
+  project_manager:
+    responsibilities:
+      - "Approve release branch creation"
+      - "Coordinate release planning"
+      - "Approve hotfix deployments"
+      - "Monitor development workflow compliance"
+    required_approvals:
+      - "release/*/main merges"
+      - "hotfix/*/main merges"
+    notifications:
+      - "release_branch_created"
+      - "hotfix_branch_created"
+      - "main_branch_updated"
+
+  architect:
+    responsibilities:
+      - "Review architectural changes"
+      - "Approve major feature designs"
+      - "Ensure technical consistency"
+    required_approvals:
+      - "PRs affecting core architecture"
+      - "Database schema changes"
+      - "API contract modifications"
+    auto_assign_criteria:
+      - "files_changed_includes: ['src/core/', 'api/', 'database/']"
+
+  frontend_developer:
+    responsibilities:
+      - "Develop frontend features"
+      - "Review frontend code changes"
+      - "Maintain UI/UX consistency"
+    branch_permissions:
+      - "create: feature/ui-*, feature/frontend-*"
+      - "merge: feature/* to develop (with approval)"
+    auto_assign_criteria:
+      - "files_changed_includes: ['frontend/', 'ui/', 'components/']"
+
+  backend_developer:
+    responsibilities:
+      - "Develop backend features"
+      - "Review backend code changes"
+      - "Maintain API consistency"
+    branch_permissions:
+      - "create: feature/api-*, feature/backend-*"
+      - "merge: feature/* to develop (with approval)"
+    auto_assign_criteria:
+      - "files_changed_includes: ['backend/', 'api/', 'services/']"
+
+  qa_engineer:
+    responsibilities:
+      - "Review all code changes"
+      - "Validate quality gates"
+      - "Approve release readiness"
+    required_approvals:
+      - "All PRs to develop"
+      - "All PRs to main"
+      - "Release branch creation"
+    notifications:
+      - "pr_created"
+      - "quality_gate_failed"
+      - "release_ready_for_testing"
+
+  devops_engineer:
+    responsibilities:
+      - "Maintain CI/CD pipelines"
+      - "Configure branch protection"
+      - "Monitor deployment health"
+    branch_permissions:
+      - "admin: all branches"
+      - "configure: branch protection rules"
+    auto_assign_criteria:
+      - "files_changed_includes: ['.github/', 'docker/', 'terraform/']"
+
+  security_engineer:
+    responsibilities:
+      - "Review security-related changes"
+      - "Approve hotfix deployments"
+      - "Monitor security compliance"
+    required_approvals:
+      - "Authentication/authorization changes"
+      - "Security configuration updates"
+      - "Hotfix deployments"
+    auto_assign_criteria:
+      - "files_changed_includes: ['security/', 'auth/', 'config/security']"
+
+  cloud_engineer:
+    responsibilities:
+      - "Review infrastructure changes"
+      - "Manage environment deployments"
+      - "Monitor resource usage"
+    branch_permissions:
+      - "create: feature/infra-*, hotfix/infra-*"
+    auto_assign_criteria:
+      - "files_changed_includes: ['infrastructure/', 'terraform/', 'k8s/']"
+
+# Automation rules
+automation:
+  branch_protection:
+    enabled: true
+    auto_configure: true
+    
+  pr_automation:
+    auto_assign_reviewers: true
+    apply_templates: true
+    validate_branch_naming: true
+    validate_commit_messages: true
+    
+  merge_automation:
+    auto_merge_on_approval: false  # Manual merge for GitFlow
+    auto_delete_feature_branches: true
+    auto_update_develop_from_main: true
+    
+  notification_rules:
+    slack_webhook: "${SLACK_WEBHOOK_URL}"
+    email_notifications: true
+    notify_on:
+      - "pr_created"
+      - "pr_approved"
+      - "pr_merged"
+      - "release_created"
+      - "hotfix_created"
+      - "deployment_started"
+      - "deployment_completed"
+
+# Quality gates
+quality_gates:
+  feature_branch:
+    required_checks:
+      - "unit_tests"
+      - "lint_check"
+      - "security_scan"
+      - "code_coverage"
+    thresholds:
+      code_coverage: 80
+      security_rating: "A"
+      technical_debt: "low"
+
+  develop_branch:
+    required_checks:
+      - "unit_tests"
+      - "integration_tests"
+      - "lint_check"
+      - "security_scan"
+      - "code_coverage"
+    thresholds:
+      code_coverage: 85
+      security_rating: "A"
+      performance_regression: 0
+
+  release_branch:
+    required_checks:
+      - "unit_tests"
+      - "integration_tests"
+      - "e2e_tests"
+      - "performance_tests"
+      - "security_audit"
+      - "code_coverage"
+    thresholds:
+      code_coverage: 90
+      security_rating: "A"
+      performance_baseline: "maintained"
+
+  main_branch:
+    required_checks:
+      - "all_tests"
+      - "security_audit"
+      - "performance_tests"
+      - "documentation_check"
+    thresholds:
+      code_coverage: 90
+      security_rating: "A"
+      documentation_coverage: 80
+
+# Deployment strategy
+deployment:
+  develop:
+    environment: "development"
+    auto_deploy: true
+    rollback_strategy: "automatic"
+    
+  release:
+    environment: "staging"
+    auto_deploy: true
+    approval_required: false
+    rollback_strategy: "automatic"
+    
+  main:
+    environment: "production"
+    auto_deploy: false
+    approval_required: true
+    approvers: ["project_manager", "devops_engineer"]
+    rollback_strategy: "manual"
+    deployment_window: "business_hours"
+
+# Metrics and reporting
+metrics:
+  cycle_time:
+    measure: "feature_start_to_production"
+    target: "7_days"
+    
+  lead_time:
+    measure: "requirement_to_delivery"
+    target: "14_days"
+    
+  deployment_frequency:
+    target: "weekly"
+    
+  change_failure_rate:
+    target: "5_percent"
+    
+  mttr:
+    target: "2_hours"
