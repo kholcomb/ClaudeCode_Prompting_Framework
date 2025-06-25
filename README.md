@@ -7,14 +7,14 @@ A prompt engineering template that enables Claude Code to assist with software d
 **Get started in 30 seconds with one command:**
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/kholcomb/ClaudeCode_Prompting_Framework/refs/heads/main/setup-framework.sh | bash -s -- --remote
+curl -fsSL https://raw.githubusercontent.com/kholcomb/ClaudeCode_Prompting_Framework/refs/heads/main/setup-framework.sh | bash
 ```
 
 *No cloning required! This command downloads and sets up the complete framework in your current directory.*
 
 **Alternative with wget:**
 ```bash
-wget -qO- https://raw.githubusercontent.com/kholcomb/ClaudeCode_Prompting_Framework/refs/heads/main/setup-framework.sh | bash -s -- --remote
+wget -qO- https://raw.githubusercontent.com/kholcomb/ClaudeCode_Prompting_Framework/refs/heads/main/setup-framework.sh | bash
 ```
 
 ## Table of Contents
@@ -192,41 +192,24 @@ The framework uses a contract-based communication system:
 ### Prerequisites
 
 - Claude Code (or Claude.ai) access
-- Git (for version control)
+- curl or wget (for downloading the framework)
 - Basic understanding of software development workflows
 - A project idea or existing codebase to work with
 
 ### Initial Setup
 
-You can set up the framework in several ways:
-
-#### Option 1: Remote Setup (Recommended)
 ```bash
 # Quick setup from anywhere - no cloning required
-curl -fsSL https://raw.githubusercontent.com/kholcomb/ClaudeCode_Prompting_Framework/refs/heads/main/setup-framework.sh | bash -s -- --remote
+curl -fsSL https://raw.githubusercontent.com/kholcomb/ClaudeCode_Prompting_Framework/refs/heads/main/setup-framework.sh | bash
 
 # Alternative with wget
-wget -qO- https://raw.githubusercontent.com/kholcomb/ClaudeCode_Prompting_Framework/refs/heads/main/setup-framework.sh | bash -s -- --remote
+wget -qO- https://raw.githubusercontent.com/kholcomb/ClaudeCode_Prompting_Framework/refs/heads/main/setup-framework.sh | bash
 ```
 
-#### Option 2: Use GitHub Template
-```bash
-# Click "Use this template" button on GitHub, then clone your new repo
-git clone https://github.com/yourusername/your-new-repo.git my-project-name
-cd my-project-name
-./setup-framework.sh
-```
-
-#### Option 3: Clone and Reinitialize  
-```bash
-git clone https://github.com/kholcomb/ClaudeCode_Prompting_Framework.git my-project-name
-cd my-project-name
-rm -rf .git                    # Remove template history
-git init                       # Initialize as your project
-git add .
-git commit -m "Initial commit from multi-agent framework template"
-./setup-framework.sh
-```
+This downloads and sets up the complete framework in your current directory. The setup script will:
+- Download all framework files and directories
+- Initialize session state
+- Optionally set up git in the project/ directory
 
 2. **Set Up Git Repository Structure**:
    ```bash

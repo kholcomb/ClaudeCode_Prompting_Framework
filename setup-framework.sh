@@ -1,161 +1,13 @@
 #!/bin/bash
 # Multi-Persona Development Framework Setup Script
-# Version: 1.3.0
-# Purpose: Initialize framework structure with optional configuration
-# Can be run locally or from remote URL
+# Script Version: 1.5.0
+# Purpose: Download and setup the complete framework from GitHub
 
 set -e
 
-# Remote setup capability
-REPO_URL="https://raw.githubusercontent.com/kholcomb/ClaudeCode_Prompting_Framework/refs/heads/main"
-TEMP_DIR=""
-
-# Cleanup function for remote setup
-cleanup_remote() {
-    if [[ -n "$TEMP_DIR" ]] && [[ -d "$TEMP_DIR" ]]; then
-        rm -rf "$TEMP_DIR"
-    fi
-}
-
-# Download and setup from remote repository
-setup_from_remote() {
-    print_header "\n🌐 Remote Setup Mode"
-    print_info "Downloading framework from GitHub..."
-    
-    # Create temporary directory
-    TEMP_DIR=$(mktemp -d)
-    trap cleanup_remote EXIT
-    
-    # Check for download tools
-    if command -v curl &> /dev/null; then
-        DOWNLOAD_CMD="curl -fsSL"
-    elif command -v wget &> /dev/null; then
-        DOWNLOAD_CMD="wget -qO-"
-    else
-        print_error "Neither curl nor wget is available"
-        print_info "Please install curl or wget and try again"
-        exit 1
-    fi
-    
-    # Download essential files
-    local files_to_download=(
-        "CLAUDE.md"
-        "VERSION"
-        "README.md"
-        "SECURITY.md"
-        "LICENSE"
-        "CHANGELOG.md"
-        ".gitignore"
-        "specs/requirements.md"
-        "specs/project-plan.md"
-        "specs/architecture.md"
-        "specs/constraints.md"
-        "specs/dependencies.md"
-        "templates/CLAUDE.md"
-        "templates/api-contract-template.md"
-        "templates/feature-spec-template.md"
-        "templates/persona-coordination-template.md"
-        "templates/status-report-template.md"
-        "templates/task-template.md"
-        "artifacts/contracts/api/CLAUDE.md"
-        "artifacts/contracts/data/CLAUDE.md"
-        "artifacts/contracts/infrastructure/CLAUDE.md"
-        "artifacts/contracts/security/CLAUDE.md"
-        "artifacts/contracts/testing/CLAUDE.md"
-        "artifacts/deliverables/CLAUDE.md"
-        "logs/CLAUDE.md"
-        "project/README.md"
-    )
-    
-    print_info "Downloading framework files..."
-    for file in "${files_to_download[@]}"; do
-        local dir=$(dirname "$file")
-        mkdir -p "$dir"
-        
-        if $DOWNLOAD_CMD "$REPO_URL/$file" > "$file" 2>/dev/null; then
-            echo "  ✓ $file"
-        else
-            print_warning "Failed to download $file (may not exist in remote)"
-        fi
-    done
-    
-    # Download GitHub workflow templates
-    mkdir -p templates/github-workflows
-    local workflow_files=(
-        "templates/github-workflows/README.md"
-        "templates/github-workflows/framework-ci.yml"
-        "templates/github-workflows/node-api-ci.yml"
-        "templates/github-workflows/python-fastapi-ci.yml"
-        "templates/github-workflows/react-ci.yml"
-    )
-    
-    for file in "${workflow_files[@]}"; do
-        if $DOWNLOAD_CMD "$REPO_URL/$file" > "$file" 2>/dev/null; then
-            echo "  ✓ $file"
-        fi
-    done
-    
-    # Download and setup session state template as active session file
-    print_info "Setting up session state..."
-    mkdir -p logs
-    if $DOWNLOAD_CMD "$REPO_URL/logs/session-state.json.template" > "logs/session-state.json" 2>/dev/null; then
-        echo "  ✓ logs/session-state.json (from template)"
-    else
-        print_warning "Failed to download session state template"
-    fi
-    
-    print_success "Framework files downloaded successfully"
-    
-    # Continue with normal setup
-    print_info "Proceeding with framework initialization..."
-}
-
-# Download essential framework files for local setup
-download_essential_files() {
-    # Check for download tools
-    if command -v curl &> /dev/null; then
-        DOWNLOAD_CMD="curl -fsSL"
-    elif command -v wget &> /dev/null; then
-        DOWNLOAD_CMD="wget -qO-"
-    else
-        print_error "Neither curl nor wget is available"
-        print_info "Please install curl or wget to download framework files"
-        return 1
-    fi
-    
-    # Essential framework files
-    local essential_files=(
-        "CLAUDE.md"
-        "VERSION"
-        "README.md"
-        "SECURITY.md"
-        "LICENSE"
-        "CHANGELOG.md"
-        ".claude/commands/help.md"
-        ".claude/commands/status.md"
-        ".claude/commands/dev.md"
-        ".claude/commands/test.md"
-        ".claude/commands/docs.md"
-        ".claude/commands/review.md"
-        ".claude/commands/plan.md"
-        ".claude/commands/checkpoint.md"
-        ".claude/commands/end-session.md"
-    )
-    
-    print_info "Downloading essential framework files..."
-    for file in "${essential_files[@]}"; do
-        local dir=$(dirname "$file")
-        mkdir -p "$dir"
-        
-        if $DOWNLOAD_CMD "$REPO_URL/$file" > "$file" 2>/dev/null; then
-            echo "  ✓ $file"
-        else
-            print_warning "Failed to download $file"
-        fi
-    done
-    
-    print_success "Essential files downloaded"
-}
+# Repository configuration
+REPO_ARCHIVE_URL="https://github.com/kholcomb/ClaudeCode_Prompting_Framework/archive/refs/heads/main.tar.gz"
+REPO_RAW_URL="https://raw.githubusercontent.com/kholcomb/ClaudeCode_Prompting_Framework/refs/heads/main"
 
 # Colors for output
 RED='\033[0;31m'
@@ -173,14 +25,6 @@ print_warning() { echo -e "${YELLOW}⚠️  $1${NC}"; }
 print_error() { echo -e "${RED}❌ $1${NC}"; }
 print_header() { echo -e "${PURPLE}$1${NC}"; }
 
-# Framework version
-if [[ -f VERSION ]]; then
-    FRAMEWORK_VERSION=$(cat VERSION)
-else
-    print_warning "VERSION file not found, using default version 1.3.0"
-    FRAMEWORK_VERSION="1.3.0"
-fi
-
 # ASCII Art Banner
 show_banner() {
     echo -e "${CYAN}"
@@ -196,18 +40,21 @@ EOF
     echo -e "${NC}"
 }
 
-
-# Check basic dependencies
+# Check dependencies
 check_dependencies() {
     print_header "\n📋 Checking Dependencies"
     
-    # Check git (required)
-    if ! command -v git &> /dev/null; then
-        print_error "Git is required but not installed"
-        print_info "Please install git and run this script again"
-        exit 1
+    local missing_deps=()
+    
+    # Check for curl or wget (required for download)
+    if ! command -v curl &> /dev/null && ! command -v wget &> /dev/null; then
+        missing_deps+=("curl or wget")
     else
-        print_success "Git is installed ($(git --version | cut -d' ' -f3))"
+        if command -v curl &> /dev/null; then
+            print_success "curl is available"
+        elif command -v wget &> /dev/null; then
+            print_success "wget is available"
+        fi
     fi
     
     # Check Claude Code (optional)
@@ -218,154 +65,46 @@ check_dependencies() {
     else
         print_success "Claude Code is available"
     fi
+    
+    # Exit if missing required dependencies
+    if [ ${#missing_deps[@]} -gt 0 ]; then
+        print_error "Missing required dependencies: ${missing_deps[*]}"
+        print_info "Please install the missing dependencies and try again"
+        exit 1
+    fi
 }
 
-# Initialize directory structure
-init_directories() {
-    print_header "\n📁 Creating Directory Structure"
+# Download the framework
+setup_framework() {
+    print_header "\n🌐 Setting up framework from GitHub"
     
-    # Create framework directories
-    mkdir -p logs/{archive,checkpoints}
-    mkdir -p artifacts/{contracts/{api,data,infrastructure,security,testing},deliverables}
-    mkdir -p specs/{apis,design}
-    mkdir -p project/{src,tests,docs,config}
-    mkdir -p templates
-    mkdir -p .vscode
-    mkdir -p .claude/commands
-    
-    print_success "Directory structure created"
-}
-
-# Copy Claude Code command templates from framework
-create_claude_commands() {
-    print_header "\n⚡ Setting Up Claude Code Commands"
-    
-    # The .claude/commands directory is already created by init_directories
-    # and should already contain the actual command files
-    
-    if [[ -d ".claude/commands" ]] && [[ $(ls -A .claude/commands 2>/dev/null) ]]; then
-        local cmd_count=$(ls .claude/commands/*.md 2>/dev/null | wc -l | tr -d ' ')
-        print_success "Claude Code commands available ($cmd_count commands)"
+    # Determine download command
+    if command -v curl &> /dev/null; then
+        DOWNLOAD_CMD="curl -L"
     else
-        print_warning "No command templates found in .claude/commands/"
-        print_info "Framework commands should be downloaded with framework files"
+        DOWNLOAD_CMD="wget -O-"
+    fi
+    
+    print_info "Downloading framework archive..."
+    if $DOWNLOAD_CMD "$REPO_ARCHIVE_URL" | tar -xz --strip-components=1 2>/dev/null; then
+        print_success "Framework downloaded and extracted successfully"
+    else
+        print_error "Failed to download framework"
+        exit 1
     fi
 }
 
 # Initialize session state
 init_session_state() {
-    local personas="$1"
+    print_header "\n🔧 Initializing session state"
     
-    # Default to all personas if not specified
-    if [[ -z "$personas" ]] || [[ "$personas" == "all" ]]; then
-        personas_json='{
-        "project_manager": {"status": "idle", "current_workflow_stage": "coordinate"},
-        "architect": {"status": "idle", "current_workflow_stage": "explore"},
-        "frontend_developer": {"status": "idle", "current_workflow_stage": "explore"},
-        "backend_developer": {"status": "idle", "current_workflow_stage": "explore"},
-        "qa_engineer": {"status": "idle", "current_workflow_stage": "write_tests"},
-        "devops_engineer": {"status": "idle", "current_workflow_stage": "assess"},
-        "security_engineer": {"status": "idle", "current_workflow_stage": "audit"},
-        "cloud_engineer": {"status": "idle", "current_workflow_stage": "analyze"}
-    }'
-    else
-        personas_json="$personas"
-    fi
-    
-    # Add project info if provided
-    local project_info=""
-    if [[ -n "$PROJECT_NAME" ]]; then
-        project_info="\"project_name\": \"$PROJECT_NAME\","
-    fi
-    
+    # Create session state with all personas
     cat > logs/session-state.json << EOF
 {
     "session_info": {
         "session_id": "$(uuidgen 2>/dev/null || date +%s)",
-        $project_info
-        "created_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || date +%Y-%m-%dT%H:%M:%S%z 2>/dev/null || date)",
-        "framework_version": "$FRAMEWORK_VERSION",
-        "current_phase": "initialization"
-    },
-    "personas": $personas_json,
-    "contracts": {
-        "active": [],
-        "draft": [],
-        "deprecated": []
-    },
-    "context_management": {
-        "mode": "normal",
-        "context_usage_estimate": "low"
-    },
-    "git_context": {
-        "branch": "main",
-        "modified_files": [],
-        "last_commit": ""
-    },
-    "progress": {
-        "overall_completion": 0,
-        "current_milestone": "Framework Setup"
-    }
-}
-EOF
-}
-
-# Setup VS Code workspace
-setup_vscode() {
-    cat > .vscode/settings.json << 'EOF'
-{
-  "files.associations": {
-    "CLAUDE.md": "markdown",
-    "*.md": "markdown"
-  },
-  "markdown.preview.breaks": true,
-  "files.exclude": {
-    "**/node_modules": true,
-    "**/__pycache__": true,
-    "**/venv": true,
-    "**/.env": true
-  },
-  "search.exclude": {
-    "**/node_modules": true,
-    "**/logs/archive": true,
-    "**/.git": true
-  },
-  "git.ignoreLimitWarning": true
-}
-EOF
-
-    cat > .vscode/extensions.json << 'EOF'
-{
-  "recommendations": [
-    "yzhang.markdown-all-in-one",
-    "davidanson.vscode-markdownlint"
-  ]
-}
-EOF
-}
-
-# Create helper scripts
-create_helper_scripts() {
-    # Reset session script
-    cat > reset-session.sh << 'EOF'
-#!/bin/bash
-# Reset session state for the Multi-Persona Framework
-
-echo "🔄 Resetting session state..."
-
-# Backup current session
-if [[ -f logs/session-state.json ]]; then
-    timestamp=$(date +%Y%m%d_%H%M%S)
-    cp logs/session-state.json "logs/archive/session-state-$timestamp.json"
-    echo "✅ Current session backed up to logs/archive/"
-fi
-
-# Reset to clean state
-echo '{
-    "session_info": {
-        "session_id": "'$(uuidgen 2>/dev/null || date +%s)'",
-        "created_at": "'$(date -u +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || date +%Y-%m-%dT%H:%M:%SZ)'",
-        "framework_version": "'$(cat VERSION 2>/dev/null || echo "1.3.0")'",
+        "created_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || date)",
+        "framework_version": "$(cat VERSION 2>/dev/null || echo "1.3.0")",
         "current_phase": "initialization"
     },
     "personas": {
@@ -394,192 +133,37 @@ echo '{
     },
     "progress": {
         "overall_completion": 0,
-        "current_milestone": "Reset"
+        "current_milestone": "Framework Setup"
     }
-}' > logs/session-state.json
-
-echo "✅ Session state reset complete"
+}
 EOF
-    chmod +x reset-session.sh
     
-    # Validate setup script
-    cat > validate-setup.sh << 'EOF'
-#!/bin/bash
-# Validate Multi-Persona Framework setup
-
-echo "🔍 Validating framework setup..."
-
-errors=0
-
-# Check framework files (warn but don't fail if missing)
-framework_files=("CLAUDE.md" "VERSION" "README.md")
-missing_framework=0
-for file in "${framework_files[@]}"; do
-    if [[ ! -f "$file" ]]; then
-        echo "⚠️  Framework file not found: $file"
-        ((missing_framework++))
-    else
-        echo "✅ Found: $file"
-    fi
-done
-
-if [[ $missing_framework -gt 0 ]]; then
-    echo "ℹ️  $missing_framework framework files missing (may be local-only setup)"
-fi
-
-# Check essential setup files
-if [[ ! -f "logs/session-state.json" ]]; then
-    echo "❌ Missing essential file: logs/session-state.json"
-    ((errors++))
-else
-    echo "✅ Found: logs/session-state.json"
-fi
-
-# Check required directories
-required_dirs=("project" "specs" "artifacts" "logs" ".claude")
-for dir in "${required_dirs[@]}"; do
-    if [[ ! -d "$dir" ]]; then
-        echo "❌ Missing required directory: $dir"
-        ((errors++))
-    else
-        echo "✅ Found: $dir/"
-    fi
-done
-
-# Check optional directories
-if [[ -d "templates" ]]; then
-    echo "✅ Found: templates/"
-else
-    echo "ℹ️  No templates/ directory (optional)"
-fi
-
-# Check git setup
-if [[ -d project/.git ]]; then
-    echo "✅ Git repository initialized in project/"
-else
-    echo "ℹ️  No git repository in project/ (optional)"
-fi
-
-# Validate session state JSON
-if command -v python3 &> /dev/null; then
-    python3 -m json.tool logs/session-state.json > /dev/null 2>&1
-    if [[ $? -eq 0 ]]; then
-        echo "✅ Session state JSON is valid"
-    else
-        echo "❌ Session state JSON is invalid"
-        ((errors++))
-    fi
-else
-    echo "⚠️  Cannot validate JSON (python3 not found)"
-fi
-
-if [[ $errors -eq 0 ]]; then
-    echo "✅ Framework setup is valid!"
-else
-    echo "❌ Found $errors issues with setup"
-    exit 1
-fi
-EOF
-    chmod +x validate-setup.sh
+    print_success "Session state initialized"
 }
 
-# Quick setup - minimal configuration
-quick_setup() {
-    print_header "\n⚡ Quick Setup Mode"
-    print_info "Creating framework with default configuration..."
+# Optional project setup
+setup_project() {
+    print_header "\n📦 Project Setup (Optional)"
     
-    init_directories
-    create_claude_commands
-    init_session_state "all"
-    setup_vscode
+    read -p "$(echo -e "${CYAN}Initialize git repository in project/ directory? [y/N]: ${NC}")" init_project_git
     
-    print_success "Quick setup complete!"
-}
-
-# Custom setup - optional configuration
-custom_setup() {
-    print_header "\n🎨 Custom Setup Mode"
-    print_info "Press Enter to use defaults or skip optional steps"
-    echo
-    
-    # Optional: Project name
-    print_info "Note: Project name will be saved to logs/session-state.json (excluded from git by default)"
-    read -p "$(echo -e "${CYAN}Project name (optional, press Enter to skip): ${NC}")" PROJECT_NAME
-    
-    # Optional: Select personas
-    echo
-    print_info "Select personas to enable (optional)"
-    echo "1) All personas (default)"
-    echo "2) Project Manager + Architect only"
-    echo "3) Custom selection"
-    read -p "$(echo -e "${CYAN}Choice [1-3, press Enter for all]: ${NC}")" persona_choice
-    
-    personas_json=""
-    case "${persona_choice:-1}" in
-        2)
-            personas_json='{
-        "project_manager": {"status": "idle", "current_workflow_stage": "coordinate"},
-        "architect": {"status": "idle", "current_workflow_stage": "explore"}
-    }'
-            ;;
-        3)
-            # Custom persona selection
-            echo "Select personas (space-separated numbers):"
-            echo "1) Project Manager  2) Architect  3) Frontend Dev  4) Backend Dev"
-            echo "5) QA Engineer  6) DevOps  7) Security  8) Cloud Engineer"
-            read -p "$(echo -e "${CYAN}Enter numbers (e.g., 1 2 5): ${NC}")" -a selections
+    if [[ "$(echo "$init_project_git" | tr '[:upper:]' '[:lower:]')" == "y" ]]; then
+        cd project/ || { print_error "Failed to enter project directory"; return; }
+        
+        if git init; then
+            print_success "Git repository initialized in project/"
             
-            if [[ ${#selections[@]} -gt 0 ]]; then
-                personas_json="{"
-                for sel in "${selections[@]}"; do
-                    case $sel in
-                        1) personas_json+='"project_manager": {"status": "idle", "current_workflow_stage": "coordinate"},' ;;
-                        2) personas_json+='"architect": {"status": "idle", "current_workflow_stage": "explore"},' ;;
-                        3) personas_json+='"frontend_developer": {"status": "idle", "current_workflow_stage": "explore"},' ;;
-                        4) personas_json+='"backend_developer": {"status": "idle", "current_workflow_stage": "explore"},' ;;
-                        5) personas_json+='"qa_engineer": {"status": "idle", "current_workflow_stage": "write_tests"},' ;;
-                        6) personas_json+='"devops_engineer": {"status": "idle", "current_workflow_stage": "assess"},' ;;
-                        7) personas_json+='"security_engineer": {"status": "idle", "current_workflow_stage": "audit"},' ;;
-                        8) personas_json+='"cloud_engineer": {"status": "idle", "current_workflow_stage": "analyze"},' ;;
-                    esac
-                done
-                personas_json="${personas_json%,}}"
+            # Create initial commit if there are files
+            if [ -n "$(ls -A 2>/dev/null)" ]; then
+                git add .
+                git commit -m "Initial project setup" 2>/dev/null || true
             fi
-            ;;
-    esac
-    
-    # Initialize directories and session
-    init_directories
-    create_claude_commands
-    init_session_state "$personas_json"
-    
-    # Optional: VS Code setup
-    echo
-    read -p "$(echo -e "${CYAN}Configure VS Code workspace? [Y/n]: ${NC}")" vscode_setup
-    if [[ "$(echo "$vscode_setup" | tr '[:upper:]' '[:lower:]')" != "n" ]]; then
-        setup_vscode
-        print_success "VS Code configured"
-    fi
-    
-    # Optional: Git setup
-    echo
-    read -p "$(echo -e "${CYAN}Initialize git in project/ directory? [y/N]: ${NC}")" git_setup
-    if [[ "$(echo "$git_setup" | tr '[:upper:]' '[:lower:]')" == "y" ]]; then
-        if [[ -d "project" ]]; then
-            cd project/ || { print_error "Failed to change to project/ directory"; exit 1; }
-            git init
-            echo "# Project" > README.md
-            echo -e "node_modules/\n*.log\n.env\n.DS_Store\nsettings.local.json" > .gitignore
-            git add .
-            git commit -m "Initial project setup" || true
-            cd .. || { print_error "Failed to return to framework root"; exit 1; }
-            print_success "Git repository initialized"
         else
-            print_error "project/ directory does not exist"
+            print_warning "Failed to initialize git in project/"
         fi
+        
+        cd .. || { print_error "Failed to return to root directory"; return; }
     fi
-    
-    print_success "Custom setup complete!"
 }
 
 # Show completion message
@@ -587,12 +171,20 @@ show_completion() {
     echo
     print_header "🎉 Framework Setup Complete!"
     echo
-    echo -e "${CYAN}What's been created:${NC}"
-    echo "  ✓ Framework directory structure"
+    echo -e "${CYAN}What's been installed:${NC}"
+    echo "  ✓ Complete framework directory structure"
+    echo "  ✓ All framework files and templates"
     echo "  ✓ Claude Code command templates (.claude/commands/)"
     echo "  ✓ Session state configuration"
-    [[ -f .vscode/settings.json ]] && echo "  ✓ VS Code workspace configuration"
-    [[ -d project/.git ]] && echo "  ✓ Git repository in project/"
+    echo "  ✓ Documentation and specifications"
+    echo
+    echo -e "${CYAN}Directory Structure:${NC}"
+    echo "  📁 project/     - Your project code goes here"
+    echo "  📁 specs/       - Project specifications"
+    echo "  📁 artifacts/   - Development artifacts"
+    echo "  📁 logs/        - Session logs and state"
+    echo "  📁 templates/   - Reusable templates"
+    echo "  📁 .claude/     - Claude Code commands"
     echo
     echo -e "${CYAN}Next Steps:${NC}"
     echo "  1. Start Claude Code from this directory:"
@@ -601,128 +193,97 @@ show_completion() {
     echo "     \"Help me understand this framework\""
     echo "     \"Let's plan a new project\""
     echo
-    if [[ "$1" == "--remote" ]]; then
-        echo -e "${CYAN}Remote Setup Complete:${NC}"
-        echo "  • Framework downloaded from: $REPO_URL"
-        echo "  • Framework files installed and configured"
-        echo "  • Consider adding this directory to version control"
-    fi
-    echo
     echo -e "${CYAN}Available Commands:${NC}"
-    if [[ -d ".claude/commands" ]] && [[ $(ls -A .claude/commands 2>/dev/null) ]]; then
-        echo -e "  • ${GREEN}/help${NC} - Display comprehensive framework help and command reference"
-        echo -e "  • ${GREEN}/status${NC} - Project status, progress tracking, and team overview"
-        echo -e "  • ${GREEN}/dev${NC} - Core development workflow for implementing features"
-        echo -e "  • ${GREEN}/test${NC} - QA and testing workflows"
-        echo -e "  • ${GREEN}/docs${NC} - Documentation synchronization and management"
-        echo -e "  • ${GREEN}/review${NC} - Request code or design reviews"
-        echo -e "  • ${GREEN}/plan${NC} - Create and update project plans"
-        echo -e "  • ${GREEN}/checkpoint${NC} - Create project milestone checkpoints"
-        echo -e "  • ${GREEN}/end-session${NC} - Properly close development sessions"
-    else
-        echo -e "  • Commands will be available after downloading framework files"
-        echo -e "  • Use ${GREEN}/help${NC} command for comprehensive guidance"
-    fi
+    echo -e "  • ${GREEN}/help${NC} - Display comprehensive framework help"
+    echo -e "  • ${GREEN}/status${NC} - View project status and progress"
+    echo -e "  • ${GREEN}/dev${NC} - Start development workflow"
+    echo -e "  • ${GREEN}/plan${NC} - Create project plans"
+    echo "  • And many more - use /help for full list"
     echo
     echo -e "${CYAN}Important:${NC}"
-    echo "  • Always run Claude from the framework root"
+    echo "  • Always run Claude from the framework root directory"
     echo "  • Your project code goes in the project/ directory"
-    echo "  • Specifications go in the specs/ directory"
+    echo "  • Framework updates: Re-run setup script for latest version"
     echo
 }
 
-# Main function
-main() {
-    local remote_mode="$1"
+# Validate setup
+validate_setup() {
+    print_header "\n🔍 Validating installation"
     
+    local errors=0
+    
+    # Check essential directories
+    local essential_dirs=("project" "specs" "artifacts" "logs" ".claude" "templates")
+    for dir in "${essential_dirs[@]}"; do
+        if [[ -d "$dir" ]]; then
+            echo "  ✓ $dir/"
+        else
+            echo "  ✗ Missing: $dir/"
+            ((errors++))
+        fi
+    done
+    
+    # Check essential files
+    local essential_files=("CLAUDE.md" "VERSION" "README.md" "logs/session-state.json")
+    for file in "${essential_files[@]}"; do
+        if [[ -f "$file" ]]; then
+            echo "  ✓ $file"
+        else
+            echo "  ✗ Missing: $file"
+            ((errors++))
+        fi
+    done
+    
+    if [[ $errors -eq 0 ]]; then
+        print_success "All essential components installed successfully!"
+        return 0
+    else
+        print_error "Installation validation failed with $errors errors"
+        return 1
+    fi
+}
+
+# Main setup flow
+main() {
     show_banner
     
-    # Choose setup mode first (before downloading in remote mode)
-    local setup_mode=""
-    local needs_download=false
+    # Check dependencies
+    check_dependencies
     
-    if [[ "$remote_mode" != "--remote" ]]; then
-        check_dependencies
-        
-        # Check if framework files are missing
-        if [[ ! -f "CLAUDE.md" ]] || [[ ! -f "VERSION" ]] || [[ ! -f "README.md" ]]; then
-            print_warning "Framework files not found in current directory"
-            print_info "This appears to be a fresh setup location"
-            read -p "$(echo -e "${CYAN}Download framework files from GitHub? [Y/n]: ${NC}")" download_choice
-            if [[ "$(echo "$download_choice" | tr '[:upper:]' '[:lower:]')" != "n" ]]; then
-                needs_download=true
-            else
-                print_info "Proceeding with local-only setup (limited functionality)"
-            fi
-        fi
-        
-        # Check if already set up
-        if [[ -f logs/session-state.json ]] && [[ -d artifacts/contracts ]]; then
-            print_warning "Framework appears to be already set up"
-            read -p "$(echo -e "${CYAN}Continue anyway? [y/N]: ${NC}")" continue_setup
-            if [[ "$(echo "$continue_setup" | tr '[:upper:]' '[:lower:]')" != "y" ]]; then
-                print_info "Setup cancelled"
-                exit 0
-            fi
-        fi
+    # Setup framework from GitHub
+    setup_framework
+    
+    # Initialize session state
+    init_session_state
+    
+    # Optional project setup
+    setup_project
+    
+    # Validate installation
+    if validate_setup; then
+        show_completion
+    else
+        print_error "Setup completed with errors. Please check the installation."
+        exit 1
     fi
-    
-    # Choose setup mode
-    echo
-    print_header "Setup Options:"
-    echo -e "  ${GREEN}[Q]uick${NC} - Minimal setup with defaults (recommended)"
-    echo -e "  ${BLUE}[C]ustom${NC} - Choose what to configure"
-    echo -e "  ${RED}[E]xit${NC} - Cancel setup"
-    echo
-    read -p "$(echo -e "${CYAN}Select setup mode [Q/c/e]: ${NC}")" setup_mode
-    
-    case "$(echo "$setup_mode" | tr '[:upper:]' '[:lower:]')" in
-        c|custom)
-            setup_mode="custom"
-            ;;
-        e|exit)
-            print_info "Setup cancelled"
-            exit 0
-            ;;
-        *)
-            setup_mode="quick"
-            ;;
-    esac
-    
-    # Handle file downloads AFTER getting user preferences
-    if [[ "$remote_mode" == "--remote" ]]; then
-        setup_from_remote
-        check_dependencies
-    elif [[ "$needs_download" == "true" ]]; then
-        print_info "Downloading framework files..."
-        download_essential_files
-    fi
-    
-    case "$(echo "$setup_mode" | tr '[:upper:]' '[:lower:]')" in
-        custom)
-            custom_setup
-            ;;
-        *)
-            quick_setup
-            ;;
-    esac
-    
-    
-    # Show completion
-    show_completion "$remote_mode"
 }
 
-# Usage information
+# Show usage
 show_usage() {
-    echo "Usage: $0 [--remote]"
+    echo "Usage: $0 [--help]"
     echo ""
-    echo "Options:"
-    echo "  --remote    Download and setup framework from GitHub"
-    echo "  --help      Show this help message"
+    echo "This script sets up the Multi-Persona Development Framework by:"
+    echo "  • Downloading the complete framework from GitHub"
+    echo "  • Initializing session state"
+    echo "  • Optionally setting up project git repository"
     echo ""
-    echo "Remote usage:"
-    echo "  curl -fsSL $REPO_URL/setup-framework.sh | bash -s -- --remote"
-    echo "  wget -qO- $REPO_URL/setup-framework.sh | bash -s -- --remote"
+    echo "Requirements:"
+    echo "  • curl or wget"
+    echo ""
+    echo "For remote execution:"
+    echo "  curl -fsSL $REPO_RAW_URL/setup-framework.sh | bash"
+    echo "  wget -qO- $REPO_RAW_URL/setup-framework.sh | bash"
 }
 
 # Handle command line arguments
@@ -731,17 +292,8 @@ case "${1:-}" in
         show_usage
         exit 0
         ;;
-    --remote)
-        # Validate we're in an empty or new directory for remote setup
-        if [[ -f "CLAUDE.md" ]] && [[ ! "$PWD" =~ /tmp ]]; then
-            print_warning "Framework files already exist in current directory"
-            print_info "Remote setup is intended for new/empty directories"
-            exit 1
-        fi
-        main "$@"
-        ;;
     "")
-        main "$@"
+        main
         ;;
     *)
         print_error "Unknown option: $1"
