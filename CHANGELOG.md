@@ -11,23 +11,53 @@ The framework consists of several major components that may be versioned indepen
 
 | Component | Current Version | Description |
 |-----------|----------------|-------------|
-| Framework | 1.2.3 | Overall framework version |
-| CLAUDE.md | 1.2.2 | Core framework instructions |
-| Session State Schema | 1.2.0 | JSON structure for state management |
-| Command Set | 1.2.0 | Available slash commands |
+| Framework | 1.6.0 | Overall framework version |
+| CLAUDE.md | 1.6.0 | Core framework instructions with worktree integration |
+| Session State Schema | 1.6.0 | JSON structure with worktree and sub-agent support |
+| Command Set | 1.6.0 | Available slash commands including worktree management |
 | Contract Protocol | 1.0.0 | Inter-persona communication format |
-| Persona Definitions | 1.2.0 | Persona workflows and responsibilities |
-| Task Management | 1.2.0 | Task queue and coordination system |
-| Directory Structure | 1.2.3 | Framework file organization |
+| Persona Definitions | 1.6.0 | Persona workflows with sub-agent delegation |
+| Task Management | 1.6.0 | Task queue with worktree coordination |
+| Directory Structure | 1.6.0 | Framework with worktrees/ directory |
+| Worktree System | 1.0.0 | Git worktree management and sub-agent delegation |
 
 ## [Unreleased]
 
 ### To Add
 - Automated contract validation
 - Persona performance metrics
-- Enhanced merge conflict resolution
 - Advanced task dependency visualization
 - Cross-persona workload balancing
+
+## [1.6.0] - 2024-06-28
+
+### Added
+- **Git Worktrees Integration**: Complete filesystem-level isolation for parallel development
+  - Unified `/project:worktree` command for create, switch, cleanup, spawn-sub-agent, list, status operations
+  - `worktrees/` directory structure with shared-state coordination
+  - Cross-worktree message queue communication system
+- **Sub-Agent Delegation Framework**: Sophisticated task subdivision and parallel execution
+  - Four delegation patterns: feature_subdivision, parallel_implementation, testing_isolation, documentation_generation
+  - Parent-child persona relationships with coordination protocols
+  - Automated sub-agent spawning and lifecycle management
+- **Enhanced Session State**: Worktree-aware session management
+  - Individual persona worktree context tracking
+  - Sub-agent relationship preservation and recovery
+  - Cross-worktree dependency management
+- **Command Integration**: All framework commands enhanced with worktree awareness
+  - `/dev` command detects complex tasks for automatic worktree consideration
+  - `/plan` includes parallel development and sub-agent delegation planning
+  - `/status` reports on worktree and sub-agent coordination
+  - `/test` supports parallel testing isolation
+
+### Enhanced
+- **CLAUDE.md Framework**: Complete update for worktree-based development workflows
+- **Documentation**: README.md updated with worktree usage examples and best practices
+- **Session Recovery**: Multi-worktree context restoration capabilities
+
+### Changed
+- Filesystem isolation replaces branch-based parallelization for conflict prevention
+- Task coordination moved from git context to dedicated message queue system
 
 ## [1.3.0] - 2024-06-23
 

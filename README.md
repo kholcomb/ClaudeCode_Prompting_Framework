@@ -63,8 +63,9 @@ This framework is a **prompt engineering template** designed to enhance how Clau
 
 ### Autonomous Persona Architecture
 - Each persona operates as an independent agent capable of parallel execution
-- True concurrent development through the Task tool
-- Multi-branch development support for isolated feature work
+- True concurrent development through git worktrees and sub-agent delegation
+- Filesystem-level isolation prevents conflicts during parallel development
+- Sub-agent spawning for complex task subdivision and parallel implementation
 - Asynchronous coordination through message queues and contracts
 
 ### Persona-Based Development
@@ -76,8 +77,9 @@ This framework is a **prompt engineering template** designed to enhance how Clau
 ### Intelligent Context Management
 - Efficient mode for token optimization during long sessions
 - Smart context pruning strategies
-- Git-aware session state tracking
-- Branch-specific context preservation per persona
+- Worktree-aware session state tracking with cross-worktree coordination
+- Sub-agent relationship preservation and recovery
+- Independent context isolation per worktree and persona
 
 ### Quality Focus
 - Quality checkpoints defined in each persona's workflow
@@ -106,7 +108,7 @@ multi_agent_prompting_framework_template/
 ├── .github/                     # GitHub configurations
 │   └── dependabot.yml          # Automated dependency updates
 ├── .claude/                     # Claude Code command templates
-│   └── commands/               # Custom command definitions
+│   └── commands/               # Custom command definitions (includes worktree.md)
 ├── artifacts/                   # Generated artifacts and contracts
 │   ├── contracts/              # Interface contracts between components
 │   │   ├── api/               # API contracts
@@ -132,13 +134,17 @@ multi_agent_prompting_framework_template/
 │   ├── project-plan.md       # Project planning
 │   ├── apis/                 # API specifications
 │   └── design/               # Design documents
-└── templates/                 # Reusable document templates
-    ├── CLAUDE.md
-    ├── api-contract-template.md
-    ├── feature-spec-template.md
-    ├── persona-coordination-template.md
-    ├── status-report-template.md
-    └── task-template.md
+├── templates/                 # Reusable document templates
+│   ├── CLAUDE.md
+│   ├── api-contract-template.md
+│   ├── feature-spec-template.md
+│   ├── persona-coordination-template.md
+│   ├── status-report-template.md
+│   └── task-template.md
+└── worktrees/                 # Git worktree management for parallel development
+    ├── README.md              # Worktree usage documentation
+    └── shared-state/          # Cross-worktree coordination
+        └── coordination.json  # Message queue and synchronization
 ```
 
 ### Workflow Architecture
@@ -516,16 +522,19 @@ Let me assess the project structure and requirements...
 - Let roles work independently when possible
 
 ### Parallelization Strategies
-- Identify independent work streams
-- Use contracts to define interfaces early
-- Document assumptions for validation
-- Minimize blocking dependencies
+- Identify independent work streams suitable for worktree isolation
+- Use contracts to define interfaces early between isolated work streams
+- Document assumptions for validation across worktrees
+- Minimize blocking dependencies through sub-agent delegation
+- Leverage worktree filesystem isolation to prevent conflicts
+- Coordinate through message queues in shared-state for integration points
 
 ### Session Management
-- Commit work regularly to preserve state
-- Use checkpoints before major changes
-- Review session state when resuming work
-- Clear completed tasks to maintain focus
+- Commit work regularly to preserve state across all worktrees
+- Use checkpoints before major changes or worktree integration
+- Review session state when resuming work to restore worktree context
+- Clear completed tasks and cleanup unused worktrees to maintain focus
+- Monitor sub-agent coordination and resolve integration conflicts
 
 ### Documentation
 - Keep specifications up to date
@@ -834,6 +843,7 @@ The framework includes several specialized commands to enhance development workf
 - `/dev` - Core development workflow for implementing features
 - `/docs` - Documentation synchronization and management  
 - `/test` - QA and testing workflows
+- `/project:worktree` - Git worktree management for parallel development and sub-agent delegation
 
 ### Persona Commands
 The framework uses persona-based development instead of individual role commands:
@@ -843,21 +853,40 @@ The framework uses persona-based development instead of individual role commands
 
 ### Example Usage
 
-**Multi-Branch Development:**
+**Worktree-Based Parallel Development:**
 ```
 Human: Let's work on two features in parallel - frontend team on the new dashboard UI, backend team on API v2
 
-Claude (as PM): I'll coordinate parallel development:
-- Activating Frontend persona on feature/dashboard-ui branch
-- Activating Backend persona on feature/api-v2 branch
-- Both can work simultaneously without conflicts
+Claude (as PM): I'll coordinate parallel development using worktrees:
+- Creating worktree for Frontend persona: /project:worktree action=create persona=frontend_developer branch=feature/dashboard-ui
+- Creating worktree for Backend persona: /project:worktree action=create persona=backend_developer branch=feature/api-v2
+- Both can work simultaneously in complete isolation
 
-[Activates personas using Task tool]
+[Activates personas using Task tool in separate worktrees]
 
-Frontend Persona: Working on Dashboard.jsx in feature/dashboard-ui
+Frontend Persona: Working in worktrees/frontend-dashboard-ui/
 - Task Queue: Active [Dashboard component], Queued [Navigation updates]
-Backend Persona: Implementing API endpoints in feature/api-v2  
-- Task Queue: Active [User endpoints], Queued [Auth middleware]
+- Can spawn sub-agents for component subdivision
+
+Backend Persona: Working in worktrees/backend-api-v2/
+- Task Queue: Active [User endpoints], Queued [Auth middleware]  
+- Can spawn sub-agents for different API modules
+```
+
+**Sub-Agent Task Delegation:**
+```
+Human: Implement a comprehensive user authentication system
+
+Claude (as Backend Dev): This is a complex feature that would benefit from parallel implementation:
+- Creating worktree: /project:worktree action=create persona=backend_developer branch=feature/auth-system
+- Spawning sub-agents: /project:worktree action=spawn-sub-agent task="Implement user authentication system" delegation-pattern=feature_subdivision
+
+[Creates 3 sub-agents working in parallel]
+Sub-Agent 1: JWT authentication implementation in worktrees/backend-auth-system-jwt/
+Sub-Agent 2: User management endpoints in worktrees/backend-auth-system-users/  
+Sub-Agent 3: Password security & validation in worktrees/backend-auth-system-security/
+
+[Parent persona coordinates integration through message queue]
 ```
 
 **Persona-Based Development:**
