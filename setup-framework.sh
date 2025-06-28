@@ -1,6 +1,6 @@
 #!/bin/bash
 # Multi-Persona Development Framework Setup Script
-# Script Version: 1.5.0
+# Script Version: 1.6.0
 # Purpose: Download and setup the complete framework from GitHub
 
 set -e
@@ -94,17 +94,40 @@ setup_framework() {
     fi
 }
 
-# Initialize session state
+# Initialize session state with worktree support
 init_session_state() {
-    print_header "\n🔧 Initializing session state"
+    print_header "\n🔧 Initializing session state with worktree support"
     
-    # Create session state with all personas
-    cat > logs/session-state.json << EOF
+    # Use the comprehensive session state template
+    if [[ -f "logs/session-state.json.template" ]]; then
+        print_info "Using comprehensive session state template..."
+        cp logs/session-state.json.template logs/session-state.json
+        
+        # Update session-specific values
+        local session_id=$(uuidgen 2>/dev/null || date +%s)
+        local timestamp=$(date -u +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || date)
+        local version=$(cat VERSION 2>/dev/null || echo "1.6.0")
+        
+        # Update session info in the copied file
+        if command -v sed &> /dev/null; then
+            sed -i.bak "s/\"session-template\"/\"$session_id\"/" logs/session-state.json
+            sed -i.bak "s/\"2024-01-01T00:00:00Z\"/\"$timestamp\"/g" logs/session-state.json
+            sed -i.bak "s/\"template\"/\"active\"/" logs/session-state.json
+            sed -i.bak "s/\"1.2.0\"/\"$version\"/g" logs/session-state.json
+            sed -i.bak "s/\"planning\"/\"initialization\"/" logs/session-state.json
+            rm -f logs/session-state.json.bak
+        fi
+        
+        print_success "Advanced session state initialized with worktree and sub-agent support"
+    else
+        print_warning "Template not found, creating basic session state..."
+        # Fallback to basic session state
+        cat > logs/session-state.json << EOF
 {
     "session_info": {
         "session_id": "$(uuidgen 2>/dev/null || date +%s)",
         "created_at": "$(date -u +%Y-%m-%dT%H:%M:%SZ 2>/dev/null || date)",
-        "framework_version": "$(cat VERSION 2>/dev/null || echo "1.3.0")",
+        "framework_version": "$(cat VERSION 2>/dev/null || echo "1.6.0")",
         "current_phase": "initialization"
     },
     "personas": {
@@ -116,6 +139,15 @@ init_session_state() {
         "devops_engineer": {"status": "idle", "current_workflow_stage": "assess"},
         "security_engineer": {"status": "idle", "current_workflow_stage": "audit"},
         "cloud_engineer": {"status": "idle", "current_workflow_stage": "analyze"}
+    },
+    "worktree_management": {
+        "enabled": true,
+        "active_worktrees": {},
+        "shared_coordination": {
+            "message_queue_path": "worktrees/shared-state/coordination.json",
+            "last_sync": null,
+            "coordination_protocol": "message_queue"
+        }
     },
     "contracts": {
         "active": [],
@@ -137,8 +169,8 @@ init_session_state() {
     }
 }
 EOF
-    
-    print_success "Session state initialized"
+        print_success "Basic session state initialized with worktree support"
+    fi
 }
 
 # Optional project setup
@@ -175,7 +207,9 @@ show_completion() {
     echo "  ✓ Complete framework directory structure"
     echo "  ✓ All framework files and templates"
     echo "  ✓ Claude Code command templates (.claude/commands/)"
-    echo "  ✓ Session state configuration"
+    echo "  ✓ Git worktree management system"
+    echo "  ✓ Sub-agent delegation framework"
+    echo "  ✓ Session state configuration with worktree support"
     echo "  ✓ Documentation and specifications"
     echo
     echo -e "${CYAN}Directory Structure:${NC}"
@@ -185,6 +219,7 @@ show_completion() {
     echo "  📁 logs/        - Session logs and state"
     echo "  📁 templates/   - Reusable templates"
     echo "  📁 .claude/     - Claude Code commands"
+    echo "  📁 worktrees/   - Git worktree management for parallel development"
     echo
     echo -e "${CYAN}Next Steps:${NC}"
     echo "  1. Start Claude Code from this directory:"
@@ -198,11 +233,14 @@ show_completion() {
     echo -e "  • ${GREEN}/status${NC} - View project status and progress"
     echo -e "  • ${GREEN}/dev${NC} - Start development workflow"
     echo -e "  • ${GREEN}/plan${NC} - Create project plans"
+    echo -e "  • ${GREEN}/project:worktree${NC} - Git worktree management for parallel development"
     echo "  • And many more - use /help for full list"
     echo
     echo -e "${CYAN}Important:${NC}"
     echo "  • Always run Claude from the framework root directory"
     echo "  • Your project code goes in the project/ directory"
+    echo "  • Use worktrees for parallel development: /project:worktree action=create"
+    echo "  • Sub-agents can be spawned for complex task subdivision"
     echo "  • Framework updates: Re-run setup script for latest version"
     echo
 }
@@ -214,7 +252,7 @@ validate_setup() {
     local errors=0
     
     # Check essential directories
-    local essential_dirs=("project" "specs" "artifacts" "logs" ".claude" "templates")
+    local essential_dirs=("project" "specs" "artifacts" "logs" ".claude" "templates" "worktrees")
     for dir in "${essential_dirs[@]}"; do
         if [[ -d "$dir" ]]; then
             echo "  ✓ $dir/"
@@ -225,7 +263,7 @@ validate_setup() {
     done
     
     # Check essential files
-    local essential_files=("CLAUDE.md" "VERSION" "README.md" "logs/session-state.json")
+    local essential_files=("CLAUDE.md" "VERSION" "README.md" "logs/session-state.json" "worktrees/shared-state/coordination.json" ".claude/commands/worktree.md")
     for file in "${essential_files[@]}"; do
         if [[ -f "$file" ]]; then
             echo "  ✓ $file"
