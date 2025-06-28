@@ -16,8 +16,8 @@ logs/session-state.json
 ehthumbs.db
 Thumbs.db
 
-# IDE files - Keep .vscode/extensions.json but ignore user-specific settings
-.vscode/settings.json
+# IDE files
+.vscode/*
 .idea/
 *.sublime-project
 *.sublime-workspace

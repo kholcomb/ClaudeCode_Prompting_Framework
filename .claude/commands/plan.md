@@ -31,6 +31,8 @@ Handle all planning and coordination for @project/ development:
 3. **Meeting Facilitation**: Cross-role meetings about @project/ decisions
 4. **Task Assignment**: Assign specific @project/ tasks to roles
 5. **Milestone Planning**: Plan @project/ development milestones
+6. **Parallel Development Planning**: Plan worktree-based parallel development
+7. **Sub-Agent Delegation Planning**: Plan task subdivision for sub-agent execution
 
 ## Usage Patterns
 
@@ -45,6 +47,12 @@ Handle all planning and coordination for @project/ development:
 `/plan meeting api-design-review`
 `/plan coordination cross-team-dependencies`
 `/plan assignment backend jwt-implementation`
+
+### Parallel Development Planning
+
+`/plan parallel user-authentication-system`
+`/plan worktrees complex-dashboard-feature`
+`/plan sub-agents api-implementation-subdivision`
 
 ### Project Management
 

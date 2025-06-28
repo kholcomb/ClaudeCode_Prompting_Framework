@@ -32,6 +32,8 @@ Handle all testing and QA activities for @project/:
 3. **End-to-End Testing**: Test complete workflows in @project/
 4. **Performance Testing**: Test @project/ performance characteristics
 5. **Security Testing**: Test @project/ security implementations
+6. **Parallel Testing**: Isolate test types using sub-agents in separate worktrees
+7. **Cross-Worktree Testing**: Coordinate testing across multiple development worktrees
 
 ## Usage Patterns
 

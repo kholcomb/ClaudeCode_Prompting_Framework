@@ -218,38 +218,65 @@ Tasks are prioritized using a standardized framework:
 - **Medium Priority**: Feature development, optimization, documentation
 - **Low Priority**: Nice-to-have features, technical debt, research
 
+### **Sub-Agent Task Delegation**
+Each persona can spawn sub-agents for parallel task execution within their worktree:
+
+#### Delegation Patterns
+- **Feature Subdivision**: Break large features into independent components
+- **Parallel Implementation**: Simultaneous work on non-conflicting files/modules
+- **Testing Isolation**: Separate sub-agents for unit, integration, and e2e tests
+- **Documentation Generation**: Parallel documentation while code development
+
+#### Sub-Agent Coordination
+- Sub-agents inherit persona capabilities but work in isolation
+- Parent persona coordinates through message queue in `worktrees/shared-state/`
+- Contract-based synchronization for integration points
+- Automatic cleanup when parent persona completes tasks
+
+#### Sub-Agent Lifecycle
+1. **Spawning**: Parent persona identifies subdivision opportunities
+2. **Assignment**: Specific tasks delegated to sub-agents with clear scope
+3. **Coordination**: Cross-sub-agent communication through parent persona
+4. **Integration**: Periodic integration points for combining work
+5. **Completion**: Sub-agent work merged back to parent persona context
+
 ### **Task Templates by Persona Type**
-Each persona has common task patterns that can be templated:
+Each persona has common task patterns that can be templated and subdivided via sub-agents:
 
 #### Project Manager Task Templates
 - Project planning and milestone definition
 - Resource allocation and capacity planning
 - Progress tracking and status reporting
 - Risk assessment and mitigation planning
+- **Sub-Agent Opportunities**: Delegate parallel planning tasks, risk assessments across different project areas, simultaneous stakeholder coordination
 
 #### Architect Task Templates
 - System design and architecture documentation
 - Technology evaluation and selection
 - API contract definition and validation
 - Performance and scalability planning
+- **Sub-Agent Opportunities**: Parallel technology research, component design isolation, simultaneous documentation generation
 
 #### Developer Task Templates (Frontend/Backend)
 - Feature implementation with acceptance criteria
 - Code review and quality assurance
 - Integration testing and validation
 - Documentation and knowledge transfer
+- **Sub-Agent Opportunities**: Feature component subdivision, parallel UI/API development, isolated testing by category
 
 #### QA Engineer Task Templates
 - Test strategy development and planning
 - Test case creation and automation
 - Bug investigation and resolution tracking
 - Quality metrics and reporting
+- **Sub-Agent Opportunities**: Parallel test suite creation (unit/integration/e2e), simultaneous test automation and manual testing
 
 #### DevOps/Cloud/Security Task Templates
 - Infrastructure provisioning and configuration
 - CI/CD pipeline setup and optimization
 - Security audit and vulnerability assessment
 - Monitoring and alerting configuration
+- **Sub-Agent Opportunities**: Parallel infrastructure components, simultaneous security scanning and compliance checks, isolated environment setup
 
 ### **Communication Patterns**
 Personas coordinate through:
@@ -265,25 +292,25 @@ When work is interrupted:
 - Message queues maintain pending communications
 - On resume, each persona reports task status and continues from checkpoint
 
-### **Multi-Branch Development**
-Personas can operate on different git branches simultaneously:
-- Each persona maintains independent branch context
-- Branch isolation prevents conflicts during parallel task execution
-- Working files tracked per persona to avoid collisions
-- Project Manager persona coordinates branch merge strategies
+### **Worktree-Based Development**
+Personas operate in isolated git worktrees for true filesystem-level parallelization:
+- Each persona gets dedicated worktree: `worktrees/frontend-feature-auth/`, `worktrees/backend-api-v2/`
+- Complete filesystem isolation prevents conflicts during parallel task execution
+- Working files tracked per worktree with no collision risk
+- Project Manager persona coordinates worktree merge strategies and integration points
 
 Example scenarios:
-- Frontend Dev on `feature/new-ui` while Backend Dev on `feature/api-v2`
-- Security Engineer on `bugfix/xss-patch` while QA on `test/integration-suite`
-- Multiple feature branches progressing in parallel
+- Frontend Dev in `worktrees/frontend-auth-ui/` while Backend Dev in `worktrees/backend-api-v2/`
+- Security Engineer in `worktrees/security-audit-fixes/` while QA in `worktrees/qa-integration-suite/`
+- Multiple feature worktrees progressing in complete isolation
 
-### **Branch-Aware Recovery**
-When resuming work with multiple branches:
-1. Each persona reports their current branch, files, and active tasks
-2. Git context restored per persona, not globally
-3. Conflicting modifications detected across branches
-4. Personas continue their task queues on respective branches
-5. Merge coordination handled through message queue
+### **Worktree-Aware Recovery**
+When resuming work with multiple active worktrees:
+1. Each persona reports their current worktree, files, and active tasks
+2. Worktree context restored per persona with complete isolation
+3. Sub-agent relationships and delegations restored
+4. Personas continue their task queues in respective worktrees
+5. Cross-worktree coordination handled through shared state and message queue
 
 ## Parallel Persona Orchestration
 
@@ -398,6 +425,20 @@ When resuming work with multiple branches:
 ## Command Integration
 
 All custom slash commands respect persona workflows, support natural parallelization, manage interface contracts, and maintain session state. Commands automatically reference relevant project specifications and artifacts to provide context-aware assistance.
+
+### **Worktree Integration Across Commands**
+- **/dev**: Detects complex tasks and automatically considers worktree isolation and sub-agent delegation
+- **/plan**: Includes parallel development planning and sub-agent delegation strategies  
+- **/status**: Reports on active worktrees, sub-agent coordination, and cross-worktree progress
+- **/test**: Supports parallel testing isolation and cross-worktree test coordination
+- **/project:worktree**: Unified command for all worktree operations and sub-agent management
+
+### **Sub-Agent Command Integration**
+Commands seamlessly integrate with sub-agent capabilities:
+- Automatic task analysis for subdivision opportunities
+- Worktree creation for isolated sub-agent execution
+- Cross-sub-agent coordination through parent personas
+- Integration point management and synchronization
 
 ## Conflict Resolution
 

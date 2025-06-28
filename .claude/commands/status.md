@@ -33,6 +33,8 @@ Provide comprehensive project status and progress tracking:
 3. **Testing Status**: Coverage and quality metrics from @project/tests/
 4. **Documentation Status**: Completeness of @project/docs/
 5. **Team Status**: Role-based progress tracking
+6. **Worktree Status**: Active worktrees and parallel development progress
+7. **Sub-Agent Status**: Sub-agent delegations and coordination state
 
 ## Usage Patterns
 
@@ -48,6 +50,8 @@ Provide comprehensive project status and progress tracking:
 `/status testing`
 `/status documentation`
 `/status deployment`
+`/status worktrees`
+`/status sub-agents`
 
 ### Time-Based
 

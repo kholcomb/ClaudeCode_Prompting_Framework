@@ -24,7 +24,13 @@
       },
       "assumptions": [],
       "last_activity": null,
-      "context": "Ready to coordinate project activities"
+      "context": "Ready to coordinate project activities",
+      "worktree_context": {
+        "current_worktree": null,
+        "managed_worktrees": [],
+        "sub_agents": [],
+        "delegation_capability": true
+      }
     },
     "architect": {
       "status": "idle",
@@ -43,7 +49,13 @@
       "assumptions": [],
       "published_contracts": [],
       "last_activity": null,
-      "context": "Ready to explore requirements and design architecture"
+      "context": "Ready to explore requirements and design architecture",
+      "worktree_context": {
+        "current_worktree": null,
+        "managed_worktrees": [],
+        "sub_agents": [],
+        "delegation_capability": true
+      }
     },
     "frontend_developer": {
       "status": "idle",
@@ -62,7 +74,13 @@
       "assumptions": [],
       "dependencies": [],
       "last_activity": null,
-      "context": "Ready to explore UI/UX requirements"
+      "context": "Ready to explore UI/UX requirements",
+      "worktree_context": {
+        "current_worktree": null,
+        "managed_worktrees": [],
+        "sub_agents": [],
+        "delegation_capability": true
+      }
     },
     "backend_developer": {
       "status": "idle",
@@ -81,7 +99,13 @@
       "assumptions": [],
       "dependencies": [],
       "last_activity": null,
-      "context": "Ready to explore data and API requirements"
+      "context": "Ready to explore data and API requirements",
+      "worktree_context": {
+        "current_worktree": null,
+        "managed_worktrees": [],
+        "sub_agents": [],
+        "delegation_capability": true
+      }
     },
     "qa_engineer": {
       "status": "idle",
@@ -100,7 +124,13 @@
       "assumptions": [],
       "quality_gates": [],
       "last_activity": null,
-      "context": "Ready to develop testing strategy"
+      "context": "Ready to develop testing strategy",
+      "worktree_context": {
+        "current_worktree": null,
+        "managed_worktrees": [],
+        "sub_agents": [],
+        "delegation_capability": true
+      }
     },
     "devops_engineer": {
       "status": "idle",
@@ -119,7 +149,13 @@
       "assumptions": [],
       "infrastructure_status": "not_configured",
       "last_activity": null,
-      "context": "Ready to assess infrastructure requirements"
+      "context": "Ready to assess infrastructure requirements",
+      "worktree_context": {
+        "current_worktree": null,
+        "managed_worktrees": [],
+        "sub_agents": [],
+        "delegation_capability": true
+      }
     },
     "security_engineer": {
       "status": "idle",
@@ -138,7 +174,13 @@
       "assumptions": [],
       "security_findings": [],
       "last_activity": null,
-      "context": "Ready to conduct security assessment"
+      "context": "Ready to conduct security assessment",
+      "worktree_context": {
+        "current_worktree": null,
+        "managed_worktrees": [],
+        "sub_agents": [],
+        "delegation_capability": true
+      }
     },
     "cloud_engineer": {
       "status": "idle",
@@ -157,7 +199,13 @@
       "assumptions": [],
       "cloud_resources": [],
       "last_activity": null,
-      "context": "Ready to analyze scalability requirements"
+      "context": "Ready to analyze scalability requirements",
+      "worktree_context": {
+        "current_worktree": null,
+        "managed_worktrees": [],
+        "sub_agents": [],
+        "delegation_capability": true
+      }
     }
   },
   "contracts": {
@@ -231,6 +279,26 @@
     "branch": null,
     "modified_files": [],
     "last_commit": null
+  },
+  "worktree_management": {
+    "enabled": true,
+    "active_worktrees": {},
+    "shared_coordination": {
+      "message_queue_path": "worktrees/shared-state/coordination.json",
+      "last_sync": null,
+      "coordination_protocol": "message_queue"
+    },
+    "sub_agent_coordination": {
+      "active_delegations": {},
+      "task_assignments": {},
+      "parallel_execution_groups": {},
+      "delegation_patterns": [
+        "feature_subdivision",
+        "parallel_implementation", 
+        "testing_isolation",
+        "documentation_generation"
+      ]
+    }
   },
   "metadata": {
     "framework_version": "1.2.0",

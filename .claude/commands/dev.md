@@ -33,6 +33,8 @@ Handle all core development tasks within the project directory:
 3. **Code Enhancement**: Refactor and optimize existing @project/ code
 4. **Integration**: Connect components within @project/
 5. **Task Assignment**: Direct specific work to appropriate development roles
+6. **Parallel Development**: Use worktrees for isolated parallel work
+7. **Sub-Agent Delegation**: Spawn sub-agents for complex task subdivision
 
 ## Usage Patterns
 
@@ -59,6 +61,12 @@ Handle all core development tasks within the project directory:
 `/dev frontend create-login-form`
 `/dev backend implement-jwt-auth`
 `/dev fullstack user-registration-flow`
+
+### Parallel Development
+
+`/dev parallel implement-user-dashboard` (spawns worktrees for parallel work)
+`/dev worktree create-feature-branch feature/api-v2`
+`/dev sub-agents delegate-task "Implement authentication system"`
 
 ## Response Format
 
@@ -95,4 +103,43 @@ Priority: [High/Medium/Low]
 - [Documentation updates in @project/docs/]
 ```
 
-Focus all development work within the @project/ directory structure, ensuring alignment with specifications in @specs/ directory.
+## Parallel Development Integration
+
+### Worktree-Based Development
+When implementing complex features, automatically consider worktree isolation:
+
+**Triggers for Worktree Creation:**
+- Tasks involving multiple developers/roles simultaneously
+- Large features that can be subdivided
+- Bug fixes that might conflict with ongoing development
+- Experimental implementations that need isolation
+
+**Implementation:**
+```bash
+# For complex tasks, first assess if parallel development would help
+if [[ "$ARGUMENTS" =~ (parallel|worktree|complex|large) ]]; then
+    /project:worktree action=create persona=[detected-persona] branch=[feature-branch]
+fi
+
+# For sub-agent delegation
+if [[ "$ARGUMENTS" =~ (sub-agents|delegate|subdivide) ]]; then
+    /project:worktree action=spawn-sub-agent task="$TASK_DESCRIPTION" delegation-pattern=feature_subdivision
+fi
+```
+
+### Sub-Agent Task Delegation
+For tasks that benefit from parallel execution:
+
+1. **Task Analysis**: Analyze if task can be subdivided
+2. **Persona Detection**: Determine primary persona (frontend, backend, fullstack)
+3. **Worktree Creation**: Create isolated development environment
+4. **Sub-Agent Spawning**: Delegate subtasks to specialized sub-agents
+5. **Coordination Setup**: Establish integration points and communication
+
+### Integration with Existing Workflow
+- Worktree operations integrate seamlessly with current dev workflow
+- Sub-agents maintain same requirement validation and architecture compliance
+- All parallel work still focuses on @project/ directory structure
+- Session state tracks cross-worktree dependencies and coordination
+
+Focus all development work within the @project/ directory structure, ensuring alignment with specifications in @specs/ directory. Leverage worktrees and sub-agents for complex tasks requiring parallel development.
